@@ -7,6 +7,8 @@ use App\Http\Controllers\Categories\CategoriesController;
 use App\Http\Controllers\Product\MonthCostController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Sales\ReplacementAndReturnController;
+use App\Http\Controllers\Sales\HitoricSalesController;
 use App\Http\Controllers\Sales\SalesProduct;
 
 /*
@@ -49,7 +51,6 @@ Route::post("/deleteP" , [UploadController::class , "delete"]);
 Route::get("/sales" , [SalesProduct::class , "getSaleNow"]);
 Route::get("/allSalesYear" , [SalesProduct::class , "getYearlyNow"]);
 Route::get("/allSalesFinalised" , [SalesProduct::class , "getSalesFinally"]);
-Route::post("/sale/finalizeSale",[SalesProduct::class , "finalizeSale"]);
 Route::post("/sale" , [SalesProduct::class , "sales"]);
 Route::put("/sale/update/{id}" , [SalesProduct::class, "updateProductSales"]);
 Route::put("/sale/discountAll" , [SalesProduct::class, "discountAllProducts"]);
@@ -57,8 +58,12 @@ Route::delete("/sale/delete/{id}" , [SalesProduct::class , "deleteOne"]);
 Route::delete("/sale/deleteAll" , [SalesProduct::class , "deleteAll"]);
 
 
+Route::post("/sale/finalizeSale",[HitoricSalesController::class , "createHistoricSales"]);
+
+Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
+
+
 Route::get("/historicSalesUser", []);
-Route::post("/exchangeProductLastSale", []);
 Route::put("/productReturnLastSale", []);
 
 Route::get("/client" , []);

@@ -18,23 +18,45 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     private array $response = ["error" => '', "result" => []];
+    private String $code;
+    private String $product;
+    private int $id_category;
+    private float $saleValue;
+    private String $size;
+    private int $qts;
+    private int $allQts;
+    private String|null $description;
 
     public function __construct()
     {
         $this->middleware("auth:api", ["except" => ["getAllProducts", "getProduct", "getByCategory"]]);
     }
 
-    public function getAllProducts()
-    {
+    private function product(Products $product): Products{
+
+        $product->code = $this->code;
+        $product->product = $this->product;
+        $product->id_category = (int)$this->id_category;
+        $product->saleValue = (float)$this->saleValue;
+        $product->size = $this->size;
+        $product->qts = (int)$this->qts;
+        $product->allQts = $this->allQts;
+        $product->description = $this->description;
+
+        return $product;
+    }
+
+    public function getAllProducts(){
 
         $Products =  DB::table('categories')->join('products', 'products.id_category', "=", "categories.id")->select("categories.*", "products.*")->get();
         $this->response["result"] = $Products;
         return $this->response;
+
     }
 
-    public function getByCategory(int|string $id)
-    {
-        if(empty($id)){
+    public function getByCategory(int|string $id){
+
+        if (empty($id)) {
             $this->response["result"] = "error";
             return $this->response;
         }
@@ -43,8 +65,8 @@ class ProductController extends Controller
         return $this->response;
     }
 
-    public function getProduct(int|string $code): JsonResponse|array
-    {
+    public function getProduct(int|string $code): JsonResponse|array{
+
         try {
             $Product = Products::where('code', $code)->firstOrFail();
             $this->response["result"] = $Product;
@@ -58,14 +80,14 @@ class ProductController extends Controller
         }
     }
 
-    public function createProduct(Request $request): JsonResponse|array
-    {
+    public function createProduct(Request $request): JsonResponse|array{
+
         $levelPermission = (new DecodeJwt())->decode($request->header("Authorization"));
         if (!Auth::check() || $levelPermission->level != 5) {
             $this->response["error"] = "Não autorizado";
             return Response()->json($this->response, 401);
         }
-        
+
         $Validator = Validator::make($request->all(), [
             "code" => "required",
             "product" => "required",
@@ -77,21 +99,23 @@ class ProductController extends Controller
             $this->response["error"] = "campos invalidos";
             return Response()->json($this->response, 401);
         }
-
-
         $checkProduct = Products::where('code', $request->input('code'))->exists();
-        if($checkProduct){
+        if ($checkProduct) {
             $this->response["error"] = "Produto ja registrado";
             return Response()->json($this->response, 400);
-        }  
-        $createProduct = new Products();
-        $createProduct->code = $request->input('code');
-        $createProduct->product = $request->input('product');
-        $createProduct->id_category = (int)$request->input('category')["id"];
-        $createProduct->saleValue = (float)$request->input('saleValue');
-        $createProduct->size = $request->input('size');
-        $createProduct->qts = (int)$request->input('qts');
-        $createProduct->allQts =  $createProduct->qts;
+        }
+
+        $this->code = $request->input('code');
+        $this->product = $request->input('product');
+        $this->id_category = (int)$request->input('category')["id"];
+        $this->saleValue = (float)$request->input('saleValue');
+        $this->size = $request->input('size');
+        $this->qts = (int)$request->input('qts');
+        $this->allQts = $this->qts;
+        $this->description = null;
+
+        $product = new Products();
+        $createProduct = $this->product($product);
 
         if (!$createProduct->save()) {
             $this->response["error"] = "erro ao salva os dados";
@@ -114,15 +138,7 @@ class ProductController extends Controller
         return $this->response;
     }
 
-
-    /**
-     * 401 - nao aautorz
-     * 400 - bad request
-     * 200 - ok
-     * 500 - error desconhecido
-     */
-    public function updateProduct(Request $request, int|string $code): JsonResponse|array
-    {
+    public function updateProduct(Request $request, int|string $code): JsonResponse|array{
 
         $levelPermission = (new DecodeJwt())->decode($request->header("Authorization"));
         if (!Auth::check() || $levelPermission->level != 5) {
@@ -142,27 +158,22 @@ class ProductController extends Controller
             $this->response["error"] = "campos invalidos";
             return Response()->json($this->response, 400);
         }
-        $code = $request->input("code");
-        $product = $request->input("product");
-        $category = (int)$request->input('category');
-        $saleValue = (float)$request->input("saleValue");
-        $size = $request->input("size");
-        $qts = (int)$request->input("qts");
-        $description = !empty($request->input('description')) ? $request->input('description') : null;
+        $this->code = $request->input("code");
+        $this->product = $request->input("product");
+        $this->category = (int)$request->input('category');
+        $this->saleValue = (float)$request->input("saleValue");
+        $this->size = $request->input("size");
+        $this->qts = (int)$request->input("qts");
+        $this->description = !empty($request->input('description')) ? $request->input('description') : null;
 
         try {
             $updateProduct = Products::where('code', $code)->firstOrFail();
-            $updateProduct->code = $code;
-            $updateProduct->product = $product;
-            $updateProduct->id_category = $category;
-            $updateProduct->saleValue = $saleValue;
-            $updateProduct->size = $size;
-            if ($updateProduct->qts != $qts) {
-                $newQtsAll =  abs($qts - $updateProduct->qts);
-                $updateProduct->allQts += $newQtsAll;
+            if ($updateProduct->qts != $this->qts) {
+                $newQtsAll =  abs($this->qts - $updateProduct->qts);
+                $this->allQts =  $updateProduct->allQts + $newQtsAll;
             }
-            $updateProduct->qts = $qts;
-            $updateProduct->description = $description;
+            $updateProduct = $this->products($updateProduct);
+
             if (!$updateProduct->save()) {
                 $this->response["error"] = "erro ao salva os dados";
                 return Response()->json($this->response, 400);
@@ -179,10 +190,8 @@ class ProductController extends Controller
         }
     }
 
-    public function delProduct(Request $request, int|string $code): JsonResponse|array
-    {
-
-
+    public function delProduct(Request $request, int|string $code): JsonResponse|array{
+        
         $levelPermission = (new DecodeJwt())->decode($request->header("Authorization"));
         if (!Auth::check() || $levelPermission->level != 5) {
             $this->response["error"] = "Não autorizado";
@@ -200,7 +209,6 @@ class ProductController extends Controller
             if ($deleteImage->isNotEmpty()) {
 
                 foreach ($deleteImage as $delete) {
-
                     $image = str_replace("http://127.0.0.1:8000/storage/", "", $delete->image);
                     if (Storage::disk("public")->exists($image)) Storage::disk("public")->delete($image);
                 }
