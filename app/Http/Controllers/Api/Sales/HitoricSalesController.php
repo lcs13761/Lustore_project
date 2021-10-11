@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\Api\Sales;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\HistoricSales;
 use App\Http\Controllers\DecodeJwt;
+use App\Models\Categories;
 use App\Models\Sales;
-
+use DateTime;
 
 class HitoricSalesController extends Controller
 {
@@ -15,10 +16,26 @@ class HitoricSalesController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api");
+        $this->middleware("auth:api" , ["except" => ["getSalesFinally" , "getHistoricYearlyNow"]]);
     }
 
+    
+    public function getHistoricYearlyNow()
+    {
+        $date = date_format(new DateTime(), 'Y-m-d H:i:s');
+        $date = explode("-", $date);
+        $sales = HistoricSales::join('categories', 'categories.id', "=", "historicsales.id_category")->whereMonth("historicsales.created_at", "<=", $date[1])->whereYear("historicsales.created_at", $date[0])->select("categories.*", "historicsales.*")->get();
+        $this->response["result"] = $sales;
+        return $this->response;
+    }
 
+    public function getSalesFinally()
+    {
+        $sales = Categories::join('historicsales', 'historicsales.id_category', "=", "categories.id")->select("categories.*", "historicsales.*")->get();
+        $this->response["result"] = $sales;
+        return $this->response;
+    }
+    
     public function createHistoricSales(Request $request)
     {
         $user = (new DecodeJwt())->decode($request->header("Authorization"))->email;
@@ -26,7 +43,7 @@ class HitoricSalesController extends Controller
 
         $allSalesConfirm = Sales::where("client", $client)->get();
 
-        if($allSalesConfirm->isEmpty){
+        if($allSalesConfirm->isEmpty()){
             $this->response["error"] = "Cliente nâo encontrado";
             return Response()->json($this->response, 404);
         }
@@ -51,11 +68,11 @@ class HitoricSalesController extends Controller
             );
         }
 
-        return $this->createHistoric($sales);
+        return $this->saveHistoric($sales);
     }
 
 
-    private function createHistoric(array $sales){
+    private function saveHistoric(array $sales){
 
         $salesHst = new HistoricSales();
 

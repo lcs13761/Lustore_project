@@ -3,13 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Categories\CategoriesController;
-use App\Http\Controllers\Product\MonthCostController;
+use App\Http\Controllers\Api\Categories\CategoriesController;
+use App\Http\Controllers\Api\Product\GetProducts;
+use App\Http\Controllers\Api\Product\MonthCostController;
 use App\Http\Controllers\UploadController;
-use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Api\Sales\DiscountProductSale;
 use App\Http\Controllers\Sales\ReplacementAndReturnController;
-use App\Http\Controllers\Sales\HitoricSalesController;
-use App\Http\Controllers\Sales\SalesProduct;
+use App\Http\Controllers\Api\Sales\HitoricSalesController;
+use App\Http\Controllers\Api\Sales\SalesProduct;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,14 +26,15 @@ use App\Http\Controllers\Sales\SalesProduct;
 
 Route::get("/401" , [AuthController::class , "unauthenticated"])->name('login');
 Route::post("/login" , [AuthController::class , "login"]);
-Route::post("/loginAdmin" , [AuthController::class , "loginAdmin"]);
-Route::post("/logout" , [AuthController::class ,"logout"]);
+Route::post("/forget" , [AuthController::class , "forgotPassword"]);
+Route::post("/reset-password/{token}" , [AuthController::class , "changePassword"]);
+Route::post("/logout" , [AuthController::class ,"logout"])->middleware('auth:api');
 Route::post("/refresh" , [AuthController::class ,"refresh"]);
 
 
-Route::get("/products" , [ProductController::class , "getAllProducts"]);
-Route::get("/product/{code}" , [ProductController::class ,"getProduct"]);
-Route::get("/products/categories/{id}" , [ProductController::class , "getByCategory"]);
+Route::get("/products" , [GetProducts::class , "getAllProducts"]);
+Route::get("/product/{code}" , [GetProducts::class ,"getProduct"]);
+Route::get("/products/categories/{id}" , [GetProducts::class , "getByCategory"]);
 Route::post("/product/add" , [ProductController::class , "createProduct"]);
 Route::put("/product/update/{code}" , [ProductController::class , "updateProduct"]);
 Route::delete("/product/delete/{code}" , [ProductController::class , "delProduct"]);
@@ -46,22 +49,23 @@ Route::post("/monthCost/add" , [MonthCostController::class ,"saveMonthCost"]);
 
 
 Route::post("/upload" , [UploadController::class , "uploadPhoto"]);
-Route::post("/deleteP" , [UploadController::class , "delete"]);
 
-Route::get("/sales" , [SalesProduct::class , "getSaleNow"]);
-Route::get("/allSalesYear" , [SalesProduct::class , "getYearlyNow"]);
-Route::get("/allSalesFinalised" , [SalesProduct::class , "getSalesFinally"]);
-Route::post("/sale" , [SalesProduct::class , "sales"]);
+Route::get("/sale" , [SalesProduct::class , "getSaleNow"]);
+Route::get("/allSalesYear" , [HitoricSalesController::class , "getHistoricYearlyNow"]);
+Route::get("/allSalesFinalised" , [HitoricSalesController::class , "getSalesFinally"]);
+
+Route::post("/sale/add" , [SalesProduct::class , "createSale"]);
 Route::put("/sale/update/{id}" , [SalesProduct::class, "updateProductSales"]);
-Route::put("/sale/discountAll" , [SalesProduct::class, "discountAllProducts"]);
 Route::delete("/sale/delete/{id}" , [SalesProduct::class , "deleteOne"]);
 Route::delete("/sale/deleteAll" , [SalesProduct::class , "deleteAll"]);
 
+Route::put("/sale/discountAll" , [DiscountProductSale::class, "discountAllProducts"]);
 
 Route::post("/sale/finalizeSale",[HitoricSalesController::class , "createHistoricSales"]);
 
-Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
-
+// Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
+// Route::post("/replacementProduct" , [ReplacementAndReturnController::class , "replacementProduct"]);
+// Route::delete("/devolutionProduct/{id}" , [ReplacementAndReturnController::class , "devolutionProduct"]);
 
 Route::get("/historicSalesUser", []);
 Route::put("/productReturnLastSale", []);

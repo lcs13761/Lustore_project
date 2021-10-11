@@ -11,4 +11,6 @@ class HistoricSales extends Model
     protected $table = 'historicsales';
     
     protected $guarded = [];  
+
+    
 }

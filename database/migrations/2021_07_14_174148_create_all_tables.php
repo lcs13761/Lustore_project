@@ -14,6 +14,17 @@ class CreateAllTables extends Migration
      */
     public function up()
     {
+
+        Schema::create("address", function(Blueprint $table){
+            $table->id()->autoIncrement()->unique();
+            $table->string('cep')->nullable();
+            $table->string('state')->nullable();
+            $table->string('district')->nullable();
+            $table->string('street')->nullable();
+            $table->integer('number')->nullable();
+            $table->string('complement')->nullable();
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('photo')->nullable();
@@ -23,15 +34,20 @@ class CreateAllTables extends Migration
             $table->string('level')->default("1");
             $table->string('cpf')->nullable();
             $table->string('phone')->nullable();
-            $table->string('cep')->nullable();
-            $table->string('state')->nullable();
-            $table->string('district')->nullable();
-            $table->string('street')->nullable();
-            $table->integer('number')->nullable();
-            $table->string('complement')->nullable();
+            $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->unsignedBigInteger('address')->nullable();
+            $table->foreign("address")->references("id")->on("address")->onDelete("NO ACTION")->onUpdate("NO ACTION");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
+
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->string('email')->index();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
         Schema::create("categories", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('category');            
@@ -111,7 +127,9 @@ class CreateAllTables extends Migration
     public function down()
     {
         Schema::dropIfExists('categorys');
+        Schema::dropIfExists('address');
         Schema::dropIfExists('users');
+        Schema::dropIfExists('password_resets');
         Schema::dropIfExists('products');
         Schema::dropIfExists('images');
         Schema::dropIfExists('historicSales');

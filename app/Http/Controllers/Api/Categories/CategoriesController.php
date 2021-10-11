@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Categories;
+namespace App\Http\Controllers\Api\Categories;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\DecodeJwt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends Controller
 {

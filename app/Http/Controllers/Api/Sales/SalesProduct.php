@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Sales;
+namespace App\Http\Controllers\Api\Sales;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DecodeJwt;
-use App\Models\Categories;
-use App\Models\HistoricSales;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\products;
 use App\Models\Sales;
-use DateTime;
+
 
 class SalesProduct extends Controller
 {
@@ -31,24 +28,7 @@ class SalesProduct extends Controller
         return $this->response;
     }
 
-    public function getYearlyNow()
-    {
-        $date = date_format(new DateTime(), 'Y-m-d H:i:s');
-        $date = explode("-", $date);
-        $sales = HistoricSales::join('categories', 'categories.id', "=", "historicsales.id_category")->whereMonth("historicsales.created_at", "<=", $date[1])->whereYear("historicsales.created_at", $date[0])->select("categories.*", "historicsales.*")->get();
-        $this->response["result"] = $sales;
-        return $this->response;
-    }
-
-    public function getSalesFinally()
-    {
-
-        $sales =  Categories::join('historicsales', 'historicsales.id_category', "=", "categories.id")->select("categories.*", "historicsales.*")->get();
-        $this->response["result"] = $sales;
-        return $this->response;
-    }
-
-    public function sales(Request $request)
+    public function createSale(Request $request)
     {
 
         $user = (new DecodeJwt())->decode($request->header("Authorization"))->email;
@@ -113,10 +93,6 @@ class SalesProduct extends Controller
             $this->response["error"] = "error desconhecido";
             return Response()->json($this->response, 500);
         }
-        if ($levelPermission->email != $updateProductSales->client) {
-            $this->response["error"] = "produto não encontrado";
-            return Response()->json($this->response, 400);
-        }
 
         $productSalesQts = (object)$request->input("product");
 
@@ -168,46 +144,26 @@ class SalesProduct extends Controller
         }
     }
 
-    public function discountAllProducts(Request $request)
-    {
-
-        $user = (new DecodeJwt())->decode($request->header("Authorization"));
-
-        if (!Auth::check() || $user->level != 5) {
-            $this->response["error"] = "Não autorizado";
-            return Response()->json($this->response, 401);
-        }
-        
-        $Validator = Validator::make($request->all(), [
-            "discount" => "required",
-        ]);
-
-        if ($Validator->fails()) {
-            $this->response["error"] = "campos invalidos";
-            return Response()->json($this->response, 400);
-        }
-
-        $client = !empty($request->input('client')) ? $request->input('client') : $user->email;
-        $discountAllProducts = Sales::where("client", $client)->get();
-
-        if ($discountAllProducts->isEmpty()) {
-            $this->response["error"] = "cliente não tem produto para adicionar desconto";
-            return Response()->json($this->response, 400);
-        }
-        $discount = $request->input('discount');
-        Sales::where("client", $client)->update([
-            "discount" => $discount,
-        ]);
-
-        $this->response["result"] =  Sales::leftJoin("images", "sales.id_product", "=", "images.id_product")->select("sales.*", "images.image")->get();
-        return Response()->json($this->response, 200);
-    }
-
+    
     public function deleteAll(Request $request)
     {
         $user = (new DecodeJwt())->decode($request->header("Authorization"))->email;
         $client = !empty($request->input('client')) ? $request->input('client') : $user;
         try {
+            $deleteAll = Sales::where("client", $client)->get();
+            if($deleteAll->isEmpty()){
+                $this->response["error"] = "";
+                return Response()->json($this->response, 200);
+            }
+            
+            foreach ($deleteAll as $delete) {
+                $product = Products::where("code" , $delete["code"])->first();
+                if(!empty($product)) {
+                    $product->qts +=  $delete["qts"];
+                    $product->save();
+                }
+
+            }
             Sales::where("client", $client)->delete();
             $this->response["error"] = "Excluido com sucesso";
             return Response()->json($this->response, 200);
@@ -215,7 +171,7 @@ class SalesProduct extends Controller
             $this->response["error"] = "aff";
             return Response()->json($this->response, 404);
         } catch (\Exception $e) {
-            $this->response["error"] = "error desconhecido";
+            $this->response["error"] = $e;
             return Response()->json($this->response, 500);
         }
         $this->response["result"] = "Excluidos com sucesso";
