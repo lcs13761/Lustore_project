@@ -9,9 +9,10 @@ use App\Http\Controllers\Api\Product\MonthCostController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Sales\DiscountProductSale;
-use App\Http\Controllers\Sales\ReplacementAndReturnController;
 use App\Http\Controllers\Api\Sales\HitoricSalesController;
 use App\Http\Controllers\Api\Sales\SalesProduct;
+use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\Mail\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +28,12 @@ use App\Http\Controllers\Api\Sales\SalesProduct;
 Route::get("/401" , [AuthController::class , "unauthenticated"])->name('login');
 Route::post("/login" , [AuthController::class , "login"]);
 Route::post("/forget" , [AuthController::class , "forgotPassword"]);
-Route::post("/reset-password/{token}" , [AuthController::class , "changePassword"]);
+Route::post("/reset-password" , [AuthController::class , "changePassword"]);
 Route::post("/logout" , [AuthController::class ,"logout"])->middleware('auth:api');
 Route::post("/refresh" , [AuthController::class ,"refresh"]);
 
+Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
+Route::post("/email/resendverification" , [MailController::class,"resendVerification"])->middleware("auth:api")->name("verification.send");
 
 Route::get("/products" , [GetProducts::class , "getAllProducts"]);
 Route::get("/product/{code}" , [GetProducts::class ,"getProduct"]);
@@ -50,9 +53,12 @@ Route::post("/monthCost/add" , [MonthCostController::class ,"saveMonthCost"]);
 
 Route::post("/upload" , [UploadController::class , "uploadPhoto"]);
 
+
 Route::get("/sale" , [SalesProduct::class , "getSaleNow"]);
 Route::get("/allSalesYear" , [HitoricSalesController::class , "getHistoricYearlyNow"]);
 Route::get("/allSalesFinalised" , [HitoricSalesController::class , "getSalesFinally"]);
+
+
 
 Route::post("/sale/add" , [SalesProduct::class , "createSale"]);
 Route::put("/sale/update/{id}" , [SalesProduct::class, "updateProductSales"]);
@@ -70,8 +76,8 @@ Route::post("/sale/finalizeSale",[HitoricSalesController::class , "createHistori
 Route::get("/historicSalesUser", []);
 Route::put("/productReturnLastSale", []);
 
-Route::get("/client" , []);
-Route::post("/client/add" , []);
+Route::get("/user" , []);
+Route::post("/user/create" , [UserController::class, 'create']);
 
 
 Route::get("/admin/all" , []);
