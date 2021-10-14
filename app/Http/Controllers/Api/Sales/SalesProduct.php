@@ -67,7 +67,7 @@ class SalesProduct extends Controller
         $sales->saleValue = $ProductCreate->saleValue;
         $sales->size = $ProductCreate->size;
         $sales->qts = $product->qts;
-        $sales->category = $ProductCreate->id_category;
+        $sales->id_category = $ProductCreate->id_category;
 
         $ProductCreate->qts -= $product->qts;
 

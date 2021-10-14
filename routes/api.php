@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Sales\HitoricSalesController;
 use App\Http\Controllers\Api\Sales\SalesProduct;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\Mail\MailController;
+use App\Http\Controllers\Api\Sales\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,31 +36,34 @@ Route::post("/refresh" , [AuthController::class ,"refresh"]);
 Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
 Route::post("/email/resendverification" , [MailController::class,"resendVerification"])->middleware("auth:api")->name("verification.send");
 
+
+//products
 Route::get("/products" , [GetProducts::class , "getAllProducts"]);
-Route::get("/product/{code}" , [GetProducts::class ,"getProduct"]);
+Route::get("/product/get/{code}" , [GetProducts::class ,"getProduct"]);
 Route::get("/products/categories/{id}" , [GetProducts::class , "getByCategory"]);
-Route::post("/product/add" , [ProductController::class , "createProduct"]);
+Route::post("/product/create" , [ProductController::class , "createProduct"]);
 Route::put("/product/update/{code}" , [ProductController::class , "updateProduct"]);
 Route::delete("/product/delete/{code}" , [ProductController::class , "delProduct"]);
 
+
+//categories
 Route::get("/categories" , [CategoriesController::class ,"getAllCategories"]);
 Route::post("/category/add" , [CategoriesController::class , "createCategory"]);
 Route::put("/category/update/{id}" , [CategoriesController::class , "updateCategory"]);
 Route::delete("/category/delete/{id}" , [CategoriesController::class , "deleteCategory"]);
 
-Route::get("/monthCost" , [MonthCostController::class ,"getCost"]);
+//cost month
 Route::post("/monthCost/add" , [MonthCostController::class ,"saveMonthCost"]);
 
-
+//upload
 Route::post("/upload" , [UploadController::class , "uploadPhoto"]);
 
-
-Route::get("/sale" , [SalesProduct::class , "getSaleNow"]);
+//historic sales
 Route::get("/allSalesYear" , [HitoricSalesController::class , "getHistoricYearlyNow"]);
-Route::get("/allSalesFinalised" , [HitoricSalesController::class , "getSalesFinally"]);
+Route::post("/sale/finalizeSale",[HitoricSalesController::class , "createHistoricSales"]);
 
-
-
+//sale
+Route::get("/sale" , [SalesProduct::class , "getSaleNow"]);
 Route::post("/sale/add" , [SalesProduct::class , "createSale"]);
 Route::put("/sale/update/{id}" , [SalesProduct::class, "updateProductSales"]);
 Route::delete("/sale/delete/{id}" , [SalesProduct::class , "deleteOne"]);
@@ -67,17 +71,16 @@ Route::delete("/sale/deleteAll" , [SalesProduct::class , "deleteAll"]);
 
 Route::put("/sale/discountAll" , [DiscountProductSale::class, "discountAllProducts"]);
 
-Route::post("/sale/finalizeSale",[HitoricSalesController::class , "createHistoricSales"]);
 
-// Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
-// Route::post("/replacementProduct" , [ReplacementAndReturnController::class , "replacementProduct"]);
-// Route::delete("/devolutionProduct/{id}" , [ReplacementAndReturnController::class , "devolutionProduct"]);
-
-Route::get("/historicSalesUser", []);
-Route::put("/productReturnLastSale", []);
+//reports
+Route::get("/reports/sales", [ReportController::class,"getAllSalesReportsSales"]);
+Route::get("/reports/cost", [ReportController::class,"getAllSalesReportsCost"]);
+Route::get("/reports/bestSellingCategoryAndProduct", [ReportController::class,"getCategoryAndProductBestSelling"]);
+Route::get("/reports/annual-profit" , [ReportController::class , "annualProfit"]);
 
 Route::get("/user" , []);
 Route::post("/user/create" , [UserController::class, 'create']);
+Route::put("/user/update" , [UserController::class, 'update'])->middleware("auth:api");
 
 
 Route::get("/admin/all" , []);
@@ -85,3 +88,6 @@ Route::put("/admin/update" , []);
 Route::post("/admin/add" , []);
 Route::delete("/admin/delete" , []);
 
+// Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
+// Route::post("/replacementProduct" , [ReplacementAndReturnController::class , "replacementProduct"]);
+// Route::delete("/devolutionProduct/{id}" , [ReplacementAndReturnController::class , "devolutionProduct"]);

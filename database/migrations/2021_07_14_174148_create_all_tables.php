@@ -14,17 +14,6 @@ class CreateAllTables extends Migration
      */
     public function up()
     {
-
-        Schema::create("address", function(Blueprint $table){
-            $table->id()->autoIncrement()->unique();
-            $table->string('cep')->nullable();
-            $table->string('state')->nullable();
-            $table->string('district')->nullable();
-            $table->string('street')->nullable();
-            $table->integer('number')->nullable();
-            $table->string('complement')->nullable();
-        });
-
         Schema::create('users', function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('photo')->nullable();
@@ -36,12 +25,24 @@ class CreateAllTables extends Migration
             $table->string('phone')->nullable();
             $table->rememberToken();
             $table->timestamp('email_verified_at')->nullable();
-            $table->unsignedBigInteger('address')->nullable();
-            $table->foreign("address")->references("id")->on("address")->onDelete("NO ACTION")->onUpdate("NO ACTION");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
+        Schema::create("address", function(Blueprint $table){
+            $table->id()->autoIncrement()->unique();
+            $table->string('cep')->nullable();
+            $table->string('state')->nullable();
+            $table->string('district')->nullable();
+            $table->string('street')->nullable();
+            $table->integer('number')->nullable();
+            $table->string('complement')->nullable();
+            $table->unsignedBigInteger('address_user')->nullable();
+            $table->foreign("address_user")->references("id")->on("users")->onDelete("NO ACTION")->onUpdate("NO ACTION");
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+        });
+        
         Schema::create('password_resets', function (Blueprint $table) {
             $table->string('email')->index();
             $table->string('token');
@@ -90,13 +91,14 @@ class CreateAllTables extends Migration
         Schema::create("sales", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string("client");
-            $table->string('code')->unique();
+            $table->string('code');
             $table->string('product');
             $table->double('saleValue');
             $table->double("discount")->default(0.0);
             $table->text("size");
             $table->integer('qts');
             $table->unsignedBigInteger('id_category');
+            $table->unsignedBigInteger('id_product');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

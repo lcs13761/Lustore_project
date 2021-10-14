@@ -9,6 +9,5 @@ class MonthCost extends Model
 {
     use HasFactory;
     protected $table = 'monthCost';
-    public $timestamps = false;
 
 }

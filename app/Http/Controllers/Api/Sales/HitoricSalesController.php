@@ -4,11 +4,10 @@ namespace App\Http\Controllers\Api\Sales;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\HistoricSales;
+    use App\Models\HistoricSales;
 use App\Http\Controllers\DecodeJwt;
-use App\Models\Categories;
 use App\Models\Sales;
-use DateTime;
+
 
 class HitoricSalesController extends Controller
 {
@@ -16,26 +15,9 @@ class HitoricSalesController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api" , ["except" => ["getSalesFinally" , "getHistoricYearlyNow"]]);
+        $this->middleware("auth:api" );
     }
 
-    
-    public function getHistoricYearlyNow()
-    {
-        $date = date_format(new DateTime(), 'Y-m-d H:i:s');
-        $date = explode("-", $date);
-        $sales = HistoricSales::join('categories', 'categories.id', "=", "historicsales.id_category")->whereMonth("historicsales.created_at", "<=", $date[1])->whereYear("historicsales.created_at", $date[0])->select("categories.*", "historicsales.*")->get();
-        $this->response["result"] = $sales;
-        return $this->response;
-    }
-
-    public function getSalesFinally()
-    {
-        $sales = Categories::join('historicsales', 'historicsales.id_category', "=", "categories.id")->select("categories.*", "historicsales.*")->get();
-        $this->response["result"] = $sales;
-        return $this->response;
-    }
-    
     public function createHistoricSales(Request $request)
     {
         $user = (new DecodeJwt())->decode($request->header("Authorization"))->email;
@@ -47,8 +29,7 @@ class HitoricSalesController extends Controller
             $this->response["error"] = "Cliente nâo encontrado";
             return Response()->json($this->response, 404);
         }
-
-        Sales::where("client", $client)->delete();
+        
         $codeSales = rand() % 2 . mt_rand();
         $sales = [];
 
@@ -58,7 +39,7 @@ class HitoricSalesController extends Controller
             $sales[] = array(
                 "code" => $allSaleConfirm->code,
                 "client" => $allSaleConfirm->client,
-                "id_category" => $allSaleConfirm->category,
+                "id_category" => $allSaleConfirm->id_category,
                 "product" => "{$allSaleConfirm->product}",
                 "saleValue" => (float)"{$value}",
                 "discount" => (float)"{$allSaleConfirm->discount}",
@@ -67,19 +48,18 @@ class HitoricSalesController extends Controller
                 "codeSales" => "{$codeSales}",
             );
         }
-
-        return $this->saveHistoric($sales);
+    
+        return $this->saveHistoric($sales,$client);
     }
 
-
-    private function saveHistoric(array $sales){
-
+    private function saveHistoric(array $sales,$client){
         $salesHst = new HistoricSales();
-
         try {
             for ($i = 0; $i < count($sales); $i++) {
                 $salesHst->create($sales[$i]);
             }
+            Sales::where("client", $client)->delete();
+
             $this->response["result"] = "Salvo com Sucesso";
             return Response()->json($this->response, 200);
         } catch (\Exception $e) {

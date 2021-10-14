@@ -6,13 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\DecodeJwt;
 use App\Models\Images;
 use App\Models\Products;
-use Faker\Provider\Image;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -29,7 +27,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api");
+        $this->middleware('auth:api');
     }
 
     private function product(Products $product): Products
@@ -62,6 +60,7 @@ class ProductController extends Controller
             "saleValue" => "required",
             "size" => "required",
             "qts" => "required",
+            'category' => "required"
         ]);
         if ($Validator->fails()) {
             $this->response["error"] = "campos invalidos";
@@ -75,7 +74,7 @@ class ProductController extends Controller
 
         $this->code = $request->input('code');
         $this->product = $request->input('product');
-        $this->id_category = (int)$request->input('category')["id"];
+        $this->category = (int)$request->input('category')["id"];
         $this->saleValue = (float)$request->input('saleValue');
         $this->size = $request->input('size');
         $this->qts = (int)$request->input('qts');
@@ -136,9 +135,8 @@ class ProductController extends Controller
         $this->description = !empty($request->input('description')) ? $request->input('description') : null;
 
         try {
-
+            
             $updateProduct = Products::where('code', $code)->firstOrFail();
-
             if ($updateProduct->qts != $this->qts) {
                 $newQtsAll =  abs($this->qts - $updateProduct->qts);
                 $this->allQts =  $updateProduct->allQts + $newQtsAll;

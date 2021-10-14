@@ -19,8 +19,8 @@ class MonthCostController extends Controller
 
     public function getCost(){
         $cost = new MonthCost();
-        $this->response["result"] = $cost->get();
-        return $this->response;
+       
+        return  $cost->get();
     }
 
     public function saveMonthCost(Request $request){

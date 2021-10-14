@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class GetProducts extends Controller
 {
+
+    private array $response = ["error" => '', "result" => []];
+
     public function getAllProducts(){
 
         $Products = Categories::join('products', 'products.id_category', "=", "categories.id")->select("categories.*", "products.*")->get();
