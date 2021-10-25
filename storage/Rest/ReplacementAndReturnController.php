@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\DecodeJwt;
 use App\Models\HistoricSales;
-use App\Models\Products;
+use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
 class ReplacementAndReturnController extends Controller
@@ -35,7 +35,7 @@ class ReplacementAndReturnController extends Controller
 
         $productDevolution = HistoricSales::find($id);
         $this->checkProduct($productDevolution);
-        $product = Products::where("code", $productDevolution->code)->first();
+        $product = Product::where("code", $productDevolution->code)->first();
         $this->devolution($product, $productDevolution);
     }
 
@@ -55,12 +55,12 @@ class ReplacementAndReturnController extends Controller
         foreach ($request->input('replacements') as $replacement) {
             $replacementProduct = HistoricSales::where("codeSales", $request->input('codeSales'))->where("code", $replacement["code"])->first();
             $this->checkProduct($replacementProduct);
-            $getProduct = Products::where("code", $replacement["code"])->first();
+            $getProduct = Product::where("code", $replacement["code"])->first();
             $this->checkProductQtsForReplacement($replacementProduct, $replacement["code"], $getProduct);
         }
 
         foreach ($request->input('products') as $product) {
-            $getProduct = Products::where("code", $product["code"])->first();
+            $getProduct = Product::where("code", $product["code"])->first();
             $this->checkProduct($getProduct);
             $this->saveReplacementProduct($getProduct, $replacementProduct->client, $product["qts"]);
         }
@@ -90,7 +90,7 @@ class ReplacementAndReturnController extends Controller
         }
     }
 
-    private function devolution(Products $updateQtsProduct, HistoricSales $devolutionProduct)
+    private function devolution(Product $updateQtsProduct, HistoricSales $devolutionProduct)
     {
         $updateQtsProduct->qts +=  $devolutionProduct->qts;
         if (!$devolutionProduct->delete() || !$updateQtsProduct->save()) {

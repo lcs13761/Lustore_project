@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HistoricSales extends Model
+class Category extends Model
 {
     use HasFactory;
-    protected $table = 'historicsales';
-    
+    protected $table = 'categories';
     protected $guarded = [];  
-
-    
+    protected $fillable = ["category"];
+    protected $hidden = ["created_at" , "updated_at"];
 }

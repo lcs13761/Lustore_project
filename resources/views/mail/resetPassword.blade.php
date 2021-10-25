@@ -2,7 +2,7 @@
 @component('mail::message')
 
 @slot('header')
-  <img id="img" src="{{ asset('storage/logo/logo.png') }}">
+  <img id="img" style="width:200px;" src="{{ asset('storage/logo/logo.png') }}">
 @endslot
 
 # Ola!

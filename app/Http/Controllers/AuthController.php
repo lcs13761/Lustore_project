@@ -13,9 +13,6 @@ use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
-    private array $response = ["error" => '', "result" => []];
-
-
     public function login(Request $request)
     {
 
@@ -41,7 +38,7 @@ class AuthController extends Controller
             $this->response["error"] = "Email e/ou senha invalido!";
             return Response()->json($this->response, 401);
         }
-        
+
         $user = User::find(auth()->user()->id);
         if ($user->hasVerifiedEmail()) {
             $this->response["verifiedEmail"] = "true";
@@ -81,8 +78,8 @@ class AuthController extends Controller
     public function unauthenticated()
     {
 
-            $this->response["error"] = "Não autorizado";
-            return response()->json($this->response, 401);
+        $this->response["error"] = "Não autorizado";
+        return response()->json($this->response, 401);
     }
 
     public function forgotPassword(Request $request)

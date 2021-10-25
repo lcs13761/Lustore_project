@@ -1,0 +1,8 @@
+// Route::get("/admin/all", []);
+// Route::put("/admin/update", []);
+// Route::post("/admin/add", []);
+// Route::delete("/admin/delete", []);
+
+// Route::post("/exchangeProductLastSale", [ReplacementAndReturnController::class , "getProductForReplacementAndReturn"]);
+// Route::post("/replacementProduct" , [ReplacementAndReturnController::class , "replacementProduct"]);
+// Route::delete("/devolutionProduct/{id}" , [ReplacementAndReturnController::class , "devolutionProduct"]);

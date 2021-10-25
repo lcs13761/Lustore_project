@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -37,8 +40,7 @@ class CreateAllTables extends Migration
             $table->string('street')->nullable();
             $table->integer('number')->nullable();
             $table->string('complement')->nullable();
-            $table->unsignedBigInteger('address_user')->nullable();
-            $table->foreign("address_user")->references("id")->on("users")->onDelete("NO ACTION")->onUpdate("NO ACTION");
+            $table->foreignIdFor(User::class)->constrained("users")->onUpdate("cascade")->onDelete("cascade");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -60,11 +62,11 @@ class CreateAllTables extends Migration
             $table->id()->autoIncrement()->unique();
             $table->string('code')->unique();
             $table->string('product');
-            $table->unsignedBigInteger('id_category');
-            $table->foreign("id_category")->references("id")->on("categories")->onDelete("NO ACTION")->onUpdate("NO ACTION");
+            $table->foreignIdFor(Category::class)->constrained("categories")->onUpdate("cascade")->onDelete("cascade");
+            $table->double('costValue');
             $table->double('saleValue');
             $table->text("description")->nullable();
-            $table->text("size");
+            $table->string("size");
             $table->integer('qts');
             $table->integer('allQts');
             $table->timestamp('created_at')->useCurrent();
@@ -75,15 +77,13 @@ class CreateAllTables extends Migration
         Schema::create("images", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('image');
-            $table->unsignedBigInteger('id_product');
-            $table->foreign('id_product')->references("id")->on("products")->onDelete("cascade");
+            $table->foreignIdFor(Product::class)->constrained('products')->onUpdate("cascade")->onDelete("cascade");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
         Schema::create("monthCost", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
-            $table->double('value');
-            $table->integer("month");            
+            $table->double('value');          
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -97,11 +97,12 @@ class CreateAllTables extends Migration
             $table->double("discount")->default(0.0);
             $table->text("size");
             $table->integer('qts');
-            $table->unsignedBigInteger('id_category');
-            $table->unsignedBigInteger('id_product');
+            $table->foreignIdFor(Category::class)->constrained('categories')->onUpdate("cascade")->onDelete("cascade");
+            $table->foreignIdFor(Product::class)->constrained('products')->onUpdate("cascade")->onDelete("cascade");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
+
         Schema::create("historicSales", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string("client");
@@ -111,8 +112,7 @@ class CreateAllTables extends Migration
             $table->double("discount")->default(0.0);
             $table->text("size");
             $table->integer('qts');
-            $table->unsignedBigInteger('id_category');
-            $table->foreign("id_category")->references("id")->on("categories")->onDelete("NO ACTION")->onUpdate("NO ACTION");
+            $table->foreignIdFor(Category::class)->constrained('categories')->onUpdate("cascade")->restrictOnDelete();           
             $table->string('codeSales');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Product;
+namespace App\Http\Controllers\Api\Cost;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,20 +10,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MonthCostController extends Controller
 {
-    private array $response = ["error" => '', "result" => []];
 
-    public function __construct()
+    public function getCost()
     {
-        $this->middleware("auth:api", ["except" => ["getAllProducts", "getProduct"]]);
-    }
-
-    public function getCost(){
         $cost = new MonthCost();
-       
+
         return  $cost->get();
     }
 
-    public function saveMonthCost(Request $request){
+    public function saveMonthCost(Request $request)
+    {
 
         $Validator = Validator::make($request->all(), [
             "value" => "required",
@@ -33,9 +29,9 @@ class MonthCostController extends Controller
             $this->response["error"] = "campos invalidos";
             return $this->response;
         }
-        
-        try{
-            $costVerificacion = MonthCost::where("month" , (int)$request->input("month"))->firstOrFail();
+
+        try {
+            $costVerificacion = MonthCost::where("month", (int)$request->input("month"))->firstOrFail();
             $costVerificacion->value = (float)$request->input('value');
             if (!$costVerificacion->save()) {
                 $this->response["error"] = "erro ao salva os dados";
@@ -43,13 +39,13 @@ class MonthCostController extends Controller
             }
             $this->response["result"] = "sucesso ao adicionar os custo";
             return $this->response;
-        }catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $e) {
         }
 
         $createCost = new MonthCost();
         $createCost->value = (float)$request->input('value');
         $createCost->month = (int)$request->input('month');
-    
+
         if (!$createCost->save()) {
             $this->response["error"] = "erro ao salva os dados";
             return Response()->json($this->response, 400);
