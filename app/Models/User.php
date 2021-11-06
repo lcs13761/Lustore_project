@@ -16,7 +16,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     protected $hidden = ["password" , "created_at" , "updated_at"];
     protected $table = 'users';
     protected $fillable = ["name" , "email" , "password"];
-    protected $casts = [
+    protected $casts = 
+    [
         'email_verified_at' => 'datetime',
     ];
 
