@@ -29,7 +29,7 @@ class CreateController extends Controller
             $sales[] = array(
                 "code" => $sale->code,
                 "client" => $sale->client,
-                "id_category" => $sale->id_category,
+                "category_id" => $sale->category_id,
                 "product" => "{$sale->product}",
                 "saleValue" => (float)"{$value}",
                 "discount" => (float)"{$sale->discount}",

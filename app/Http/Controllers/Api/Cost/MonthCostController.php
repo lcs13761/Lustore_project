@@ -14,7 +14,6 @@ class MonthCostController extends Controller
     public function getCost()
     {
         $cost = new MonthCost();
-
         return  $cost->get();
     }
 
@@ -32,8 +31,7 @@ class MonthCostController extends Controller
 
         try {
             $costVerificacion = MonthCost::where("month", (int)$request->input("month"))->firstOrFail();
-            $costVerificacion->value = (float)$request->input('value');
-            if (!$costVerificacion->save()) {
+            if (!$costVerificacion->update(["value" => (float)$request->input('value')])) {
                 $this->response["error"] = "erro ao salva os dados";
                 return Response()->json($this->response, 400);
             }
@@ -42,11 +40,13 @@ class MonthCostController extends Controller
         } catch (ModelNotFoundException $e) {
         }
 
-        $createCost = new MonthCost();
-        $createCost->value = (float)$request->input('value');
-        $createCost->month = (int)$request->input('month');
+        $createCost = [
+            "value" =>  (float)$request->input('value'),
+            "month" => (int)$request->input('month')
+        ];
 
-        if (!$createCost->save()) {
+
+        if (!MonthCost::create()) {
             $this->response["error"] = "erro ao salva os dados";
             return Response()->json($this->response, 400);
         }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Image;
+use App\Http\Controllers\Api\Image\ImageController;
 
 class DeleteController extends Controller
 {
@@ -19,14 +20,19 @@ class DeleteController extends Controller
 
         $delete = Product::find($id);
         if (!$delete) {
-            return Response()->json("Produto não encontrado.", 400);
+            $this->response["error"] = "Produto não encontrado.";
+            return Response()->json($this->response, 400);
         }
 
         if ($delete->qts > 0) {
-            return Response()->json("Não é possivel excluir um produto disponivel em estoque.", 400);
+            $this->response["error"] = "Não é possivel excluir um produto disponivel em estoque.";
+            return Response()->json($this->response, 400);
         }
-
-        $this->image($delete->id);
+       
+        if (!$this->image($delete->id)) {
+            $this->response["error"] = "Error ao deletar a image.";
+            return Response()->json($this->response, 400);
+        }
 
         if (!$delete->delete()) {
             $this->response["error"] = "Error ao deletar";
@@ -41,7 +47,9 @@ class DeleteController extends Controller
         $deleteImage = Image::where("product_id", $product)->get();
         if ($deleteImage->isNotEmpty()) {
             foreach ($deleteImage as $delete) {
-                (new Image())->delete($delete->image);
+                    if (!(new ImageController())->delete($delete["image"])) {
+                    return false;
+                }
             }
         }
         return true;

@@ -19,7 +19,7 @@ class GetController extends Controller
 
     public function getAll()
     {
-        $Products = (new Product())->get();
+        $Products = (new Product())->latest("products.created_at")->get();
 
         $this->response["result"]  = $this->responseProduct($Products);
         return $this->response;

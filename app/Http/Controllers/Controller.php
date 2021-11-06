@@ -8,6 +8,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Http\Controllers\DecodeJwt;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Controller extends BaseController
 {
@@ -15,15 +16,30 @@ class Controller extends BaseController
     public array $response = ["error" => '', "result" => []];
 
 
-    static function levelAccess($level){
-        $levelPermission = (new DecodeJwt())->decode($level->header("Authorization"));
-        if (!Auth::check() || $levelPermission->level != 5) {
+
+    private function user()
+    {
+        $token = JWTAuth::getToken();
+        $response = JWTAuth::getPayload($token)->toArray();
+        return $response["user"];
+    }
+
+    protected function levelAccess($level)
+    {
+        if (!Auth::check() || $this->user["level"] != 5) {
             return false;
-        } 
+        }
         return true;
     }
 
-    static function emailAccess($request){
-     return (new DecodeJwt())->decode($request->header("Authorization"))->email;
+    protected function name(){
+        $name = $this->user()->name;
+        return $name;
+    }
+
+    protected function emailAccess($request)
+    {
+        $email = $this->user()->email;
+        return $email;
     }
 }

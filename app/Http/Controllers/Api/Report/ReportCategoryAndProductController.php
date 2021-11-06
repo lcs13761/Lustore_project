@@ -24,19 +24,19 @@ class ReportCategoryAndProductController extends Controller
     return $this->response;
   }
 
-  private function calculateCategoryMoreSales($categories)
+  private function calculateCategoryMoreSales($categoriesAndProducts)
   {
-    foreach ($categories as $category) {
-      if (!isset($this->categories[$category["category"]])) {
-        $this->categories[$category["category"]] =  0;
+    foreach ($categoriesAndProducts as $value) {
+      if (!isset($this->categories[$value["category"]])) {
+        $this->categories[$value["category"]] =  0;
       }
-      if (!isset($this->categories[$category["product"]])) {
-        $this->products[$category["product"]] =  0;
+      if (!isset($this->categories[$value["product"]])) {
+        $this->products[$value["product"]] =  0;
       }
 
-      $this->allQts += $category["qts"];
-      $this->categories[$category["category"]] = $this->categories[$category["category"]] + $category["qts"];
-      $this->products[$category["product"]] += $category["qts"];
+      $this->allQts += $value["qts"];
+      $this->categories[$value["category"]] = $this->categories[$value["category"]] + $value["qts"];
+      $this->products[$value["product"]] +=  $value["qts"];
     }
     foreach ($this->categories as $key => $value) {
       $this->categories[$key]  = round(($value / $this->allQts) * 100);

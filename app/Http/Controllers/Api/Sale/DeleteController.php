@@ -36,7 +36,7 @@ class DeleteController extends Controller
 
     public function all(Request $request)
     {
-        $user = $this::emailAccess($request);
+        $user = $this->emailAccess($request);
         $client = $request->client ?? $user;
 
         $removeAll = Sale::where("client", $client)->get();

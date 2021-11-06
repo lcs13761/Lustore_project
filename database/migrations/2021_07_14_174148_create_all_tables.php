@@ -90,8 +90,8 @@ class CreateAllTables extends Migration
    
         Schema::create("sales", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
-            $table->string("client");
             $table->string('code');
+            $table->string("client");
             $table->string('product');
             $table->double('saleValue');
             $table->double("discount")->default(0.0);

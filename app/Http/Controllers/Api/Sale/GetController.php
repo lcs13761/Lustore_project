@@ -11,9 +11,8 @@ class GetController extends Controller
     public function index(Request $request)
     {
 
-        $user = $this::emailAccess($request);
+        $user = $this->emailAccess($request);
         $this->response["result"] = Sale::where("client" , $user)->get();
-        return $this->response;
         return Response()->json($this->response, 200);
     }
 }

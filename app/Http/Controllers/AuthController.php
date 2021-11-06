@@ -68,10 +68,11 @@ class AuthController extends Controller
     {
 
         try {
-            $token = Auth::refresh();
-            return response()->json($token, 200);
+            $this->response["result"] = Auth::refresh();
+            return response()->json($this->response, 200);
         } catch (\Exception $e) {
-            return response()->json($e, 401);
+            $this->response["error"] = "Error ao gerar o token.";
+            return response()->json($this->response, 500);
         }
     }
 

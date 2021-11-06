@@ -38,17 +38,17 @@ class UpdateController extends Controller
         }
 
 
-        if($update->code != $request->code){
-            $exist = Product::where("code",$request->code)->exists();
-            if($exist){
+        if ($update->code != $request->code) {
+            $exist = Product::where("code", $request->code)->exists();
+            if ($exist) {
                 $this->response["error"] = "Codigo do produto ja foi registrado.";
-                return Response()->json($this->response, 400);
+                return Response()->json($this->response, 410);
             }
         }
 
         if ($update->qts != $request->qts) {
             $newQtsAll =  abs($request->qts - $update->qts);
-            $request->allQts =  $update->allQts + $newQtsAll;
+            $update->allQts =  $update->allQts + $newQtsAll;
         }
 
         $updateProduct = [
@@ -59,16 +59,16 @@ class UpdateController extends Controller
             "costValue" =>  $request->costValue,
             "size" => $request->size,
             "qts" => $request->qts,
-            "allQts" => $request->allQts,
+            "allQts" => $update->allQts,
             "description" => $request->description
         ];
 
-        if ($request->image) {
+        foreach ($request->image as $image) {
 
-            foreach ($request->image as $image) {
-
-               $this->image($image["image"], $image["id"],$update->id);
+            if($image["image"]){
+                $this->image($image["image"], $image["id"], $update->id);
             }
+          
         }
 
         if (!$update->update($updateProduct)) {
@@ -80,10 +80,14 @@ class UpdateController extends Controller
         return Response()->json($this->response, 200);
     }
 
-    private function image($image,$id, $product)
+    private function image($image, $id, $product)
     {
 
-        if(!empty($id)){
+        $verify = Image::where("image",$image)->exists();
+        if($verify){
+            return;
+        }
+        if (!empty($id) || $id == null) {
             Image::create([
                 "image" => $image,
                 "product_id" => $product
@@ -92,18 +96,14 @@ class UpdateController extends Controller
         }
 
         $img = Image::find($id);
-        $img->image = $image;
-        if($img->image != $image){
+        if ($img->image != $image) {
             if (!(new ImageController())->delete($img->image)) {
                 return false;
             }
             return true;
         }
-    
-        $img->save();
+
+        $img->update(["image" => $image]);
         return true;
     }
-
-
-
 }

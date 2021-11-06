@@ -23,6 +23,7 @@ class CreateController extends Controller
             "costValue" => "required",
             "size" => "required|int",
             "qts" => "required|int",
+            "image" => [],
             'category' => [
                 "id" => "required"
             ]
@@ -53,8 +54,12 @@ class CreateController extends Controller
             return Response()->json($this->response, 400);
         }
 
-        if (!empty($request->image)) {
-            $product->image()->create(["image" => $request->image]);
+        foreach ($request->image as $image) {
+
+            if($image["image"]){
+                $product->image()->create(["image" => $image["image"]]);
+            }
+
         }
 
         $this->response["result"] = "sucesso ao adicionar produto";

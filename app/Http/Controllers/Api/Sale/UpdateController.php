@@ -16,7 +16,7 @@ class UpdateController extends Controller
             "product" => "required"
         ]);
 
-        $user = $this::emailAccess($request);
+        $user = $this->emailAccess($request);
         $sale = Sale::find($id);
         if($sale->isEmpty || $sale->client != $user){
             $this->response["error"] = "Venda não encontrada para o usuario.";

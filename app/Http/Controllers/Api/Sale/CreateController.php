@@ -6,22 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Sale;
+use Illuminate\Support\Facades\Validator;
 
 class CreateController extends Controller
 {
     public function index(Request $request)
     {
+        $validate = Validator::make($request->product,[
+                "id" => "required",
+                "qts" => "required"
+            ]);
 
-        $user = $this::emailAccess($request);
+            if($validate->fails()){
+                $this->response["error"] = "Informe todos os dados.";
+                return Response()->json($this->response, 123);
+            }
+
+        $user = $this->emailAccess($request);
         $product = (object)$request->product;
 
-        if (empty($product->code)) {
-            $this->response["error"] = "Informe o produto.";
-            return Response()->json($this->response, 400);
-        }
-
-        $product_sale =  Product::where('code', $product->code)->first();
-        if ($product_sale->isEmpty()) {
+        $product_sale =  Product::find($request->product["id"]);
+        if (!$product_sale) {
             $this->response["error"] = "Produto não encontrado";
             return response()->json($this->response, 400);
         }
@@ -36,11 +41,11 @@ class CreateController extends Controller
         
         $create = [
             "code" => $product_sale->code,
-            "client" => $request->client ?? $user,
+            "client" => $request->client ??  $user,
             "product" => $product_sale->product,
             "product_id" => $product_sale->id,
             "saleValue" => $product_sale->saleValue,
-            "sizes" => $product_sale->size,
+            "size" => $product_sale->size,
             "qts" => $product->qts ?? 1,
             "category_id" => $product_sale->category_id,
         ];
@@ -51,7 +56,7 @@ class CreateController extends Controller
             $this->response["error"] = "erro ao salva os dados..";
             return Response()->json($this->response, 400);
         }
-        $this->response["result"] = Sale::leftJoin("images", "sales.id_product", "=", "images.id_product")->select("sales.*", "images.image")->get();
+        $this->response["result"] = Sale::leftJoin("images", "sales.product_id", "=", "images.product_id")->select("sales.*", "images.image")->get();
         return response()->json($this->response, 200);
     }
 }

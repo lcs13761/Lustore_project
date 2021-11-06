@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class MailController extends Controller
 {
-    private array $response = ["error" => '', "result" => []];
+    public array $response = ["error" => '', "result" => []];
 
     public function verifyEmail($id,$hash){
 
