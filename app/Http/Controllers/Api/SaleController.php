@@ -67,4 +67,16 @@ class SaleController extends Controller
         abort_if(!$sale->delete(),500,"Error ao excluir.");
         Log::info("Product removed successfully.");
     }
+
+     /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Sale  $sale
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyAll(Request $request)
+    {
+        //abort_if(!$sale->delete(),500,"Error ao excluir.");
+        Log::info("Product removed successfully.");
+    }
 }

@@ -68,7 +68,6 @@ class CreateAllTables extends Migration
             $table->text("description")->nullable();
             $table->string("size");
             $table->integer('qts');
-            $table->integer('allQts');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

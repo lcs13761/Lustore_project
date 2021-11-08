@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -24,9 +26,14 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
+        $this->levelAccess();
+        $request->validated();
         abort_if(!Category::create($request->all()),500,"Error");
+        Log::info("category created successfully.");
+        $this->response["result"] = "sucesso";
+        return response()->json($this->response,200);
     }
 
     /**
@@ -47,9 +54,14 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(CategoryRequest $request, Category $category)
     {
+        $this->levelAccess();
+        $request->validated();
         abort_if(!$category->update($request->all()),500,"Error");
+        Log::info("category updated successfully.");
+        $this->response["result"] = "sucesso";
+        return response()->json($this->response,200);
     }
 
     /**
@@ -61,5 +73,8 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         abort_if(!$category->delete(),500,"Error");
+        Log::info("category deleted successfully.");
+        $this->response["result"] = "sucesso";
+        return response()->json($this->response,200);
     }
 }

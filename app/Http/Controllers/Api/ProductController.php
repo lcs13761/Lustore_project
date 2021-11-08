@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
+use App\Http\Resources\Product\ProductCollection;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+
+    public function __construct(){
+        $this->middleware("auth:api", ["except" => ["index","show"]]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +22,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $product = Product::with(["image", "category"]);
+        return (new ProductCollection($product->paginate(10)))->response();
     }
 
     /**
@@ -28,8 +34,11 @@ class ProductController extends Controller
      */
     public function store(StorePostRequest $request)
     {
+        $this->levelAccess();
         abort_if(!Product::create($request->all()),500,"Error ao registra o produto");
         Log::info("Product created successfully.");
+        $this->response["result"] = "sucesso";
+        return response()->json($this->response,200);
     }
 
     /**

@@ -3,18 +3,19 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ExampleTest extends TestCase
+class routeUser extends TestCase
 {
     /**
-     * A basic test example.
+     * A basic feature test example.
      *
      * @return void
      */
-    public function test_example()
+    public function route_login_onexpect_code()
     {
-        $response = $this->get("");
+        $response = $this->get('/');
 
         $response->assertStatus(200);
     }

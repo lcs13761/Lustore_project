@@ -6,7 +6,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
-use App\Http\Controllers\DecodeJwt;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -15,21 +14,21 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public array $response = ["error" => '', "result" => []];
 
+    protected function userValidate(int $user)
+    {
+        abort_if(Auth::user()->id != $user, 403, "Não autorizado.");
+    }
 
-
-    private function user()
+    private function token()
     {
         $token = JWTAuth::getToken();
         $response = JWTAuth::getPayload($token)->toArray();
         return $response["user"];
     }
 
-    protected function levelAccess($level)
+    protected function levelAccess()
     {
-        if (!Auth::check() || $this->user["level"] != 5) {
-            return false;
-        }
-        return true;
+        abort_if($this->token()->level != 5, 403, "Não autorizado.");
     }
 
     protected function name(){
@@ -39,7 +38,7 @@ class Controller extends BaseController
 
     protected function emailAccess($request)
     {
-        $email = $this->user()->email;
+        $email = $this->token()->email;
         return $email;
     }
 }
