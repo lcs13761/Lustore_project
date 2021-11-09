@@ -41,4 +41,6 @@ class Controller extends BaseController
         $email = $this->token()->email;
         return $email;
     }
+
+ 
 }

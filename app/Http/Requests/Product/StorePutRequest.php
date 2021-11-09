@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePostRequest extends FormRequest
+class StorePutRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,9 +23,14 @@ class StorePostRequest extends FormRequest
      */
     public function rules()
     {
+        $product = explode("/" ,$this->path())[2];
         return [
-            "code" => "required|integer|unique:products,code",
-            "product" => "required",
+        
+            "code" => "required|integer|unique:products,code," . $product . ",id",
+            "product" => "required|string",
+            "images" => "nullable|array",
+            "images.id" => "nullable|integer",
+            "images.image" => "nullable|string",
             "category_id" => "required|array",
             "category_id.id" => "required|integer",
             "costValue" => "required|numeric",

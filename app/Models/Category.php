@@ -12,4 +12,7 @@ class Category extends Model
     protected $guarded = [];  
     protected $fillable = ["category"];
     protected $hidden = ["created_at" , "updated_at"];
+
+
+  
 }
