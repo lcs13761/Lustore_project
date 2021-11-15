@@ -10,5 +10,10 @@ class Sale extends Model
     use HasFactory;
     protected $table = 'sales';
     public $timestamps = false;
-    protected $fillable = ["code" ,"client","product","product_id","saleValue","size","qts","category_id"];
+    protected $fillable = ["client","product_id","salesman","saleValue","size","qts","discount"];
+
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
+
 }

@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Historic extends Model
 {
     use HasFactory;
-    protected $table = 'historicsales';
-    
-    protected $guarded = [];  
+    protected $table = 'historicSales';
 
-    
+    protected $guarded = [];
+
+
 }

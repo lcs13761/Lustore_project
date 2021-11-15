@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\HistoricController;
+use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\Image\ImageController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\MailController;
-use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Auth\MailController;
+use App\Http\Controllers\Api\Auth\PasswordController;
 use App\Http\Controllers\Api\Report;
 use App\Http\Controllers\Api\SaleController;
 
@@ -33,16 +34,11 @@ Route::post("/forget", [PasswordController::class, "forgotPassword"]);
 Route::post("/reset-password", [PasswordController::class, "changePassword"]);
 Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
 
-Route::apiResource('user',UserController::class);
+Route::apiResource('user',UserController::class)->except(["show", "destroy"]);
 Route::apiResource('product',ProductController::class);
+Route::apiResource('category',CategoryController::class);
+Route::apiResource('sale',SaleController::class)->middleware("auth:api");
+Route::apiResource('historic', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
 
 Route::post("/upload",[ImageController::class,"store"]);
-Route::middleware("auth:api")->group(function () {
 
-
-  Route::delete('/sale/all', [SaleController::class, 'destroyAll'])->name('sale.destroy.all');
-  Route::apiResource('sale',SaleController::class);
-  Route::apiResource('category',CategoryController::class);
-  
-
-});

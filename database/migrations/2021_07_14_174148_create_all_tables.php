@@ -32,7 +32,7 @@ class CreateAllTables extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
-        Schema::create("address", function(Blueprint $table){
+        Schema::create("address", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('cep')->nullable();
             $table->string('state')->nullable();
@@ -44,7 +44,7 @@ class CreateAllTables extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
-        
+
         Schema::create('password_resets', function (Blueprint $table) {
             $table->string('email')->index();
             $table->string('token');
@@ -53,14 +53,14 @@ class CreateAllTables extends Migration
 
         Schema::create("categories", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
-            $table->string('category');            
+            $table->string('category');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
         Schema::create("products", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
-            $table->string('code')->unique();
+            $table->integer('code')->unique();
             $table->string('product');
             $table->foreignIdFor(Category::class)->constrained("categories")->onUpdate("cascade")->onDelete("cascade");
             $table->double('costValue');
@@ -72,7 +72,6 @@ class CreateAllTables extends Migration
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
-
         Schema::create("images", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('image');
@@ -80,30 +79,23 @@ class CreateAllTables extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
-        Schema::create("monthCost", function (Blueprint $table) {
-            $table->id()->autoIncrement()->unique();
-            $table->double('value');          
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-        });
-   
+
+
         Schema::create("sales", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
-            $table->string('code');
-            $table->string("client");
-            $table->string('product');
+            $table->string("client")->nullable();
+            $table->string("salesman");
+            $table->foreignIdFor(Product::class)->constrained('products');
             $table->double('saleValue');
             $table->double("discount")->default(0.0);
-            $table->text("size");
             $table->integer('qts');
-            $table->foreignIdFor(Category::class)->constrained('categories')->onUpdate("cascade")->onDelete("cascade");
-            $table->foreignIdFor(Product::class)->constrained('products')->onUpdate("cascade")->onDelete("cascade");
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
         Schema::create("historicSales", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
+            $table->string('codeSales');
             $table->string("client");
             $table->string('code');
             $table->string('product');
@@ -111,13 +103,10 @@ class CreateAllTables extends Migration
             $table->double("discount")->default(0.0);
             $table->text("size");
             $table->integer('qts');
-            $table->foreignIdFor(Category::class)->constrained('categories')->onUpdate("cascade")->restrictOnDelete();           
-            $table->string('codeSales');
+            $table->foreignIdFor(Category::class)->constrained('categories')->onUpdate("cascade")->restrictOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
-
-
     }
 
     /**
@@ -134,8 +123,6 @@ class CreateAllTables extends Migration
         Schema::dropIfExists('products');
         Schema::dropIfExists('images');
         Schema::dropIfExists('historicSales');
-        Schema::dropIfExists('monthCost');
         Schema::dropIfExists('sales');
-        
     }
 }

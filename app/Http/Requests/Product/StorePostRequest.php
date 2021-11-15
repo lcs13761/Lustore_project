@@ -37,4 +37,5 @@ class StorePostRequest extends FormRequest
             "qts" => "required|integer"
         ];
     }
+
 }

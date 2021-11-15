@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -11,9 +12,8 @@ use Illuminate\Auth\Events\PasswordReset;
 
 class PasswordController extends Controller
 {
-    public function forgotPassword(Request $request)
+    public function forgotPassword(Request $request): JsonResponse|string
     {
-
         $request->validate(["email" => "required|email"]);
         $status = Password::sendResetLink(
             $request->only('email')
@@ -35,7 +35,6 @@ class PasswordController extends Controller
 
     public function changePassword(Request $request)
     {
-
         $request->validate([
             "token" => "required",
             "email" => "required",

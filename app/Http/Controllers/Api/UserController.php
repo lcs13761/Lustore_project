@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Requests\User\UserCreateRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
@@ -20,28 +23,29 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(Auth::user(), 200);
+        return response()->json(Auth::user());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param UserCreateRequest $request
+     * @return JsonResponse|Response
      */
-    public function store(UserCreateRequest $request)
+    public function store(UserCreateRequest $request): Response|JsonResponse
     {
-        $request->validated();
         $created = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => Hash::make($request->password)
         ]);
-        if ($request->address) $created->address()->create($request->address);
+        if (!empty($request->address)) {
+            if ($request->address) $created->address()->create($request->address);
+        }
         event(new Registered($created));
         $this->response["result"] = "Verifique sua caixa de email para confirmar a sua conta.";
         return response()->json($this->response, 200);
@@ -50,8 +54,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return Response
      */
     public function show(User $user)
     {
@@ -61,16 +65,18 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @param UserUpdateRequest $request
+     * @param User $user
+     * @return JsonResponse|Response
      */
-    public function update(UserUpdateRequest $request, User $user)
+    public function update(UserUpdateRequest $request, User $user): Response|JsonResponse
     {
         $this->userValidate($user->id);
         $request->validated();
         $user->update($request->except(["address","level"]));
-        if($request->address) $user->address()->updateOrCreate(["user_id" => $user->id], $request->address);
+        if (!empty($request->address)) {
+            if($request->address) $user->address()->updateOrCreate(["user_id" => $user->id], $request->address);
+        }
         $this->response["result"] = "Usuario modificado om sucesso.";
         return response()->json($this->response, 200);
     }
@@ -78,8 +84,8 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @param User $user
+     * @return Response
      */
     public function destroy(User $user)
     {

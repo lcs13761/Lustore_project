@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -14,7 +14,7 @@ class MailController extends Controller
     public function verifyEmail($id,$hash){
 
         $user = User::find($id);
-        
+
         abort_if(!$user,403);
         abort_if(!hash_equals($hash,sha1($user->getEmailForVerification())),403);
 
@@ -25,7 +25,7 @@ class MailController extends Controller
 
         $this->response["result"] = "Email verificado";
         return Response()->json($this->response, 200);
-        
+
     }
 
     public function resendVerification(Request $request){
@@ -33,6 +33,6 @@ class MailController extends Controller
 
         $this->response["result"] = "Email enviado";
         return Response()->json($this->response, 200);
-        
+
     }
 }

@@ -16,77 +16,122 @@
             background-color: rgba(0, 0, 0, 0.9);
         }
 
-        .containerCenter {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            margin: 0 15px;
-            align-items: center;
+        .mw-100{
+            max-width: 100% !important;
+        }
+        .m-auto{
+            margin: auto;
         }
 
-        #img {
-            max-width: 300px;
+        .text-center{
+            text-align: center;
         }
 
-        .position_relative {
-            position: relative;
+        .mt-5{
+            margin-top: 3rem !important;
         }
 
-        .label {
-            color: #fff;
-            font-size: 20px;
-            padding: 5px 0;
+        .mx-3 {
+            margin-right: 1rem !important;
+            margin-left: 1rem !important;
         }
 
-        .inputForget,
-        .buttonForm {
-            width: calc(100% - 10px);
-            height: 50px;
-            border: 0px;
-            border-radius: 3px;
-            padding: 0 0 0 10px;
+        .d-inline-block{
+            display: inline-block;
         }
 
-        .buttonForm {
-            margin-top: 10px;
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
             cursor: pointer;
-            color: #fff;
-            font-size: 20px;
-            background-color: rgba(0, 103, 254, 1);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .btn {
+                transition: none;
+            }
+        }
+        .btn:hover {
+            color: #212529;
         }
 
-        .showPasswordPosition {
-            position: absolute;
-            top: 46px;
-            right: 10px;
-            cursor: pointer;
+        .rounded {
+            border-radius: 0.25rem !important;
         }
 
-        .iconSize {
-            width: 30px;
-            height: 30px;
+        .bg-primary {
+
+            background-color: rgba(100, 161, 157, 1) !important;
         }
 
+        .text-white{
+            color: #e2e8f0;
+        }
+
+        .container{
+            width: 100%;
+            /*padding-right: var(--bs-gutter-x, 0.75rem);*/
+            /*padding-left: var(--bs-gutter-x, 0.75rem);*/
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        @media (min-width: 576px) {
+           .container {
+                max-width: 540px;
+            }
+        }
+        @media (min-width: 768px) {
+           .container {
+                max-width: 720px;
+            }
+        }
+        @media (min-width: 992px) {
+             .container {
+                max-width: 960px;
+            }
+        }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1170px;
+            }
+        }
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1320px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <article class="containerCenter">
-        <div style="padding-top:30px;">
-            <div style=" max-width: 300px;margin: 0 auto;">
-          
-            </div>
-         
-            <form style="padding-top: 10px" action="{{ url('/reset-password') }}" method="post">
-                @csrf
-        
-                <div>
-                    <button class="buttonForm" id="send" style="width: 100%;">SALVAR</button>
-                </div>
-            </form>
+<article class="optin_page">
+    <div class="container">
+        <div class="mw-100 m-auto text-center mt-5" style="width: 600px;">
+            <img class="mw-100 mt-5" style="width:400px" alt="{{ $value->title}}" title="{{$value->title}}"
+                 src="{{asset($value->image)}}"/>
+            <h1 class="text-white">{{ $value->title}}</h1>
+            <p style="margin-bottom: 10px" class="mx-3 text-white">{{ $value->desc}}</p>
+            @if (!empty($value->link))
+                <a class="d-inline-block btn bg-primary rounded"
+                   href="{{ $value->link}}" title="{{ $value->linkTitle}}">{{ $value->linkTitle}}</a>
+            @endif
         </div>
-    </article>
-
+    </div>
+</article>
 </body>
-
 </html>

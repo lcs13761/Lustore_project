@@ -9,7 +9,6 @@ class ReportAnnualController extends Controller
 {
     public function index()
     {
-
         $annualProfit = Category::join('historicsales', 'historicsales.category_id', "=", "categories.id")->select("categories.*", "historicsales.*")->get();
         $this->response["result"] = $this->annualProfitCalculations($annualProfit);
         return Response()->json($this->response, 200);

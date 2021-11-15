@@ -13,7 +13,7 @@ class SaleRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class SaleRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "client" => "nullable|email:rfc,dns",
+            "salesman" => "required|string",
+            "product" => "required|array",
+            "product.id" => "required|integer",
+            "discount" => "required|numeric",
+            "qts" => "required|integer",
         ];
     }
 }

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\Image\ImageController;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StorePostRequest;
 use App\Http\Requests\Product\StorePutRequest;
 use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
@@ -18,12 +20,13 @@ class ProductController extends Controller
     {
         $this->middleware("auth:api", ["except" => ["index", "show"]]);
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse|Response
      */
-    public function index()
+    public function index(): Response|JsonResponse
     {
         $product = Product::with(["image", "category"]);
         return (new ProductCollection($product->paginate(10)))->response();
@@ -32,10 +35,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param StorePostRequest $request
+     * @return JsonResponse|Response
      */
-    public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request): Response|JsonResponse
     {
         $this->levelAccess();
 
@@ -48,40 +51,38 @@ class ProductController extends Controller
         }
         Log::info("Product created successfully.");
         $this->response["result"] = "sucesso";
-        return response()->json($this->response, 200);
+        return response()->json($this->response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return JsonResponse|Response
      */
-    public function show(Product $product)
+    public function show(Product $product): Response|JsonResponse
     {
-        //
+        return (new ProductResource($product->loadMissing(["image", "category"])))->response();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param StorePutRequest $request
+     * @param Product $product
+     * @return JsonResponse|Response
      */
-    public function update(StorePutRequest $request, Product $product)
+    public function update(StorePutRequest $request, Product $product): Response|JsonResponse
     {
         $this->levelAccess();
-
-
         abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
         if ($request->images) {
 
             $image = new ImageController();
             foreach ($request->images as $value) {
 
-                if ($value["image"] == null || $image->existFIle($value["image"])) {
-                    $imageFind = $value["id"]  ? $product->image()->find($value['id']) : false;
+                if ($value["image"] == null || $image->existFile($value["image"])) {
+                    $imageFind = $value["id"] ? $product->image()->find($value['id']) : false;
                     if ($imageFind && $imageFind->image != $value["image"]) {
                         $image->destroy($imageFind->image);
                     }
@@ -89,30 +90,30 @@ class ProductController extends Controller
                 }
             }
         }
-
         Log::info("Product created successfully.");
         $this->response["result"] = "sucesso";
-        return response()->json($this->response, 200);
+        return response()->json($this->response);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return JsonResponse
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): JsonResponse
     {
         $images = $product->image()->getResults();
-        if($images) {
-            foreach($images as $value) {
-                $image = new ImageController();
-                $image->existFIle($value->image) ? $image->destroy($value->image) : null;
+        if ($images) {
+            $imageController = new ImageController();
+            foreach ($images as $value) {
+
+                if ($imageController->existFile($value->image)) $imageController->destroy($value->image);
+
             }
         }
         abort_if(!$product->delete(), 500, "Error ao excluir.");
         Log::info("Product removed successfully.");
         $this->response["result"] = "sucesso";
-        return response()->json($this->response, 200);
+        return response()->json($this->response);
     }
 }

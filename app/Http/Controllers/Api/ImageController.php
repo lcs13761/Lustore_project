@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Image;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -9,12 +9,12 @@ use App\Http\Controllers\Controller;
 
 class ImageController extends Controller{
 
-  public function existFIle($file)
+  public function existFile($file): bool
   {
     return Storage::disk("public")->exists($this->format($file));
   }
 
-  public function store(Request $request)
+  public function store(Request $request): \Illuminate\Http\JsonResponse
   {
     if (!is_array($request->file("images"))) {
 
@@ -30,11 +30,10 @@ class ImageController extends Controller{
     return response()->json($this->response);
   }
 
-  private function save(UploadedFile $image)
+  private function save(UploadedFile $image): string
   {
-    $url = $image->store("images", "public");
-    $path = asset("storage/" . $url);
-    return $path;
+      $url = $image->store("images", "public");
+      return asset("storage/" . $url);
   }
 
   public function destroy(string $image)
@@ -43,7 +42,7 @@ class ImageController extends Controller{
     Storage::disk("public")->delete($file);
   }
 
-  private function format(string $format)
+  private function format(string $format): array|string
   {
     return str_replace("http://localhost/storage/", "", $format);
   }

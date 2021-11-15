@@ -19,7 +19,7 @@ class Controller extends BaseController
         abort_if(Auth::user()->id != $user, 403, "Não autorizado.");
     }
 
-    private function token()
+    protected function token()
     {
         $token = JWTAuth::getToken();
         $response = JWTAuth::getPayload($token)->toArray();
@@ -31,16 +31,13 @@ class Controller extends BaseController
         abort_if($this->token()->level != 5, 403, "Não autorizado.");
     }
 
-    protected function name(){
-        $name = $this->user()->name;
-        return $name;
-    }
-
-    protected function emailAccess($request)
+    protected function name()
     {
-        $email = $this->token()->email;
-        return $email;
+        return $this->user()->name;
     }
 
- 
+    protected function emailAccess()
+    {
+        return $this->token()->email;
+    }
 }

@@ -15,7 +15,7 @@ class Product extends Model
 
     public function setCategoryIdAttribute($value)
     {
-        $this->attributes['category_id'] = $value["id"];
+        $this->attributes['category_id'] = $value["id"] ?? $value;
     }
 
     public function image()
