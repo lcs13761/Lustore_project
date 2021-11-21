@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StorePostRequest;
-use App\Http\Requests\Product\StorePutRequest;
+use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
@@ -18,7 +17,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api", ["except" => ["index", "show"]]);
+        $this->middleware("auth:api");
     }
 
     /**
@@ -38,13 +37,23 @@ class ProductController extends Controller
      * @param StorePostRequest $request
      * @return JsonResponse|Response
      */
-    public function store(StorePostRequest $request): Response|JsonResponse
+    public function store(ProductRequest $request): Response|JsonResponse
     {
         $this->levelAccess();
 
-        $product = Product::create($request->all());
+        $product = Product::create([
+            "code" => $request->code, 
+            "product" => $request->product, 
+            "category_id" => $request->category["id"],
+            "saleValue" => $request->saleValue, 
+            "costValue" => $request->costValue, 
+            "size" => $request->size, 
+            "qts" => $request->qts,
+            "description" => $request->description
+        ]);
+
         abort_if(!$product, 500, "Error ao registra o produto");
-        if ($request->images) {
+        if ($request->image && isset($request->image["image"])) {
             foreach ($request->images as $image) {
                 $product->image()->create($image);
             }
@@ -72,11 +81,23 @@ class ProductController extends Controller
      * @param Product $product
      * @return JsonResponse|Response
      */
-    public function update(StorePutRequest $request, Product $product): Response|JsonResponse
+    public function update(ProductRequest $request, Product $product): Response|JsonResponse
     {
         $this->levelAccess();
+        $update = [
+            "code" => $request->code, 
+            "product" => $request->product, 
+            "category_id" => $request->category["id"],
+            "saleValue" => $request->saleValue, 
+            "costValue" => $request->costValue, 
+            "size" => $request->size, 
+            "qts" => $request->qts,
+            "description" => $request->description
+        ];
+
         abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
-        if ($request->images) {
+
+        if ($request->image && isset($request->image["image"])) {
 
             $image = new ImageController();
             foreach ($request->images as $value) {
@@ -90,7 +111,8 @@ class ProductController extends Controller
                 }
             }
         }
-        Log::info("Product created successfully.");
+
+        Log::info("Product update successfully.");
         $this->response["result"] = "sucesso";
         return response()->json($this->response);
     }
@@ -108,7 +130,6 @@ class ProductController extends Controller
             foreach ($images as $value) {
 
                 if ($imageController->existFile($value->image)) $imageController->destroy($value->image);
-
             }
         }
         abort_if(!$product->delete(), 500, "Error ao excluir.");

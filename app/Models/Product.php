@@ -10,13 +10,9 @@ class Product extends Model
     use HasFactory;
     protected $hidden = ["created_at", "updated_at"];
     protected $table = 'products';
-    protected $fillable = ["code", "product", "category_id", "saleValue", "costValue", "size", "qts", "allQts", "description"];
+    protected $fillable = ["code", "product", "category_id", "saleValue", "costValue", "size", "qts", "description"];
 
 
-    public function setCategoryIdAttribute($value)
-    {
-        $this->attributes['category_id'] = $value["id"] ?? $value;
-    }
 
     public function image()
     {

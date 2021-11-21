@@ -27,9 +27,6 @@ class DatabaseSeeder extends Seeder
 
         event(new Registered($created));
 
-        \App\Models\Category::factory(10)->create();
-        \App\Models\Product::factory(10)->create();
-        \App\Models\Image::factory(10)->create();
 
     }
 }

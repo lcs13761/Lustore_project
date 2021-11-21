@@ -9,7 +9,9 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Auth\MailController;
 use App\Http\Controllers\Api\Auth\PasswordController;
-use App\Http\Controllers\Api\Report;
+use App\Http\Controllers\Api\Report\ReportAnnualController;
+use App\Http\Controllers\Api\Report\ReportCategoryAndProductController;
+use App\Http\Controllers\Api\Report\ReportSalesController;
 use App\Http\Controllers\Api\SaleController;
 
 /*
@@ -41,4 +43,15 @@ Route::apiResource('sale',SaleController::class)->middleware("auth:api");
 Route::apiResource('historic', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
 
 Route::post("/upload",[ImageController::class,"store"]);
+
+
+Route::middleware('auth:api')->group(function(){
+
+  Route::prefix('report')->group(function(){
+    Route::get('/sale',[ReportSalesController::class,'index']);
+    Route::get('/product/category',[ReportCategoryAndProductController::class,'index']);
+    Route::get('/sale/annual',[ReportAnnualController::class,'index']);
+  });
+
+});
 

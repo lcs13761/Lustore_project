@@ -12,6 +12,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        
         $token = Auth::attempt($request->all());
 
         if (!$token) {

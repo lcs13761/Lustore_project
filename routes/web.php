@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\PasswordController;
 use App\Http\Controllers\web\Mail\MailController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Web\AuthForgotController;
@@ -22,7 +23,7 @@ Route::get('/', function () {
 
 
 Route::get('/retrieve_password/{token}', [AuthForgotController::class,"retrievePassword"])->name('password.reset');
-Route::post('/reset-password', [AuthController::class,"changePassword"]);
+Route::post('/reset-password', [PasswordController::class,"changePassword"]);
 
 Route::get('/email/verify',[VerifyEmail::class,"verify"])->name('verification.notice');
 Route::get('/verification-email/{id}/{hash}', [VerifyEmail::class,"verificationEmail"])->middleware(['signed'])->name('verification.verify');
