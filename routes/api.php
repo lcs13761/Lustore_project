@@ -29,7 +29,7 @@ use App\Http\Controllers\Api\SaleController;
 Route::get("/401", [AuthController::class, "unauthenticated"])->name('login');
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/logout", [AuthController::class, "logout"])->middleware('auth:api');
-Route::post("/refresh", [AuthController::class, "refresh"])->middleware('auth:api');
+Route::post("/refresh", [AuthController::class, "refresh"]);
 
 Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
 Route::post("/forget", [PasswordController::class, "forgotPassword"]);

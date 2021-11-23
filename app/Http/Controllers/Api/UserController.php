@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\UserUpdateRequest;
-use App\Http\Requests\User\UserCreateRequest;
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Events\Registered;
@@ -33,19 +31,17 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param UserCreateRequest $request
+     * @param UserRequest $request
      * @return JsonResponse|Response
      */
-    public function store(UserCreateRequest $request): Response|JsonResponse
+    public function store(UserRequest $request): Response|JsonResponse
     {
         $created = User::create([
             "name" => $request->name,
             "email" => $request->email,
             "password" => Hash::make($request->password)
         ]);
-        if (!empty($request->address)) {
-            if ($request->address) $created->address()->create($request->address);
-        }
+        if (!empty($request->address) && is_array($request->address))$created->address()->create($request->address);
         event(new Registered($created));
         $this->response["result"] = "Verifique sua caixa de email para confirmar a sua conta.";
         return response()->json($this->response, 200);
@@ -65,18 +61,16 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UserUpdateRequest $request
+     * @param UserRequest $request
      * @param User $user
      * @return JsonResponse|Response
      */
-    public function update(UserUpdateRequest $request, User $user): Response|JsonResponse
+    public function update(UserRequest $request, User $user): Response|JsonResponse
     {
         $this->userValidate($user->id);
         $request->validated();
         $user->update($request->except(["address","level"]));
-        if (!empty($request->address)) {
-            if($request->address) $user->address()->updateOrCreate(["user_id" => $user->id], $request->address);
-        }
+        if (!empty($request->address)) $user->address()->updateOrCreate(["user_id" => $user->id], $request->address);
         $this->response["result"] = "Usuario modificado om sucesso.";
         return response()->json($this->response, 200);
     }
