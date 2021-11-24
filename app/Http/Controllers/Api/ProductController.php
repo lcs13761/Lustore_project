@@ -17,7 +17,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api");
+       // $this->middleware("auth:api");
     }
 
     /**
@@ -53,9 +53,12 @@ class ProductController extends Controller
         ]);
 
         abort_if(!$product, 500, "Error ao registra o produto");
-        if ($request->image && isset($request->image["image"])) {
+        if ($request->image && is_array($request->image)) {
             foreach ($request->images as $image) {
-                $product->image()->create($image);
+                if(isset($image['image'])){
+                    $product->image()->create($image);
+                }
+                
             }
         }
         Log::info("Product created successfully.");
