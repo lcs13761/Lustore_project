@@ -17,11 +17,14 @@ class ReportController extends Controller
     {
         $date = date_format(new DateTime(), 'Y-m-d H:i:s');
         $date = explode("-", $date);
-        return Historic::join('categories', 'categories.id', "=", "historicsales.category_id")->whereMonth("historicsales.created_at", "<=", $date[1])->whereYear("historicsales.created_at", $date[0])->select("categories.*", "historicsales.*")->get();
+        $historic = Historic::with('category');
+        return $historic->whereMonth("historicSales.created_at", "<=", $date[1])->whereYear("historicSales.created_at", $date[0])->get();
+    
     }
 
     public function reportForMonthSales($salesOrCosts)
     {
+        
         $this->month = date_format(new DateTime(), 'm');
         foreach ($salesOrCosts as $saleOrCost) {
             $value = (float)$saleOrCost["saleValue"] * $saleOrCost["qts"];

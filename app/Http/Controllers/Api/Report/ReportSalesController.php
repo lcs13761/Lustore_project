@@ -11,8 +11,10 @@ class ReportSalesController extends Controller
     {
         $controller = new ReportController();
         $sales = $controller->year();
-        $controller->reportForMonthSales("sales", $sales);
-        $this->response["result"] = $controller->monthSales;
+        if($sales->isNotEmpty()){
+            $controller->reportForMonthSales( $sales);
+            $this->response["result"] = $controller->monthSales;
+        }
         return Response()->json($this->response, 200);
     }
 }

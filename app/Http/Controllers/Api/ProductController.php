@@ -37,7 +37,7 @@ class ProductController extends Controller
      * @param StorePostRequest $request
      * @return JsonResponse|Response
      */
-    public function store(ProductRequest $request): Response|JsonResponse
+    public function store(ProductRequest $request)
     {
         $this->levelAccess();
 
@@ -54,7 +54,8 @@ class ProductController extends Controller
 
         abort_if(!$product, 500, "Error ao registra o produto");
         if ($request->image && is_array($request->image)) {
-            foreach ($request->images as $image) {
+        
+            foreach ($request->image as $image) {
                 if(isset($image['image'])){
                     $product->image()->create($image);
                 }
@@ -100,10 +101,10 @@ class ProductController extends Controller
 
         abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
 
-        if ($request->image && isset($request->image["image"])) {
+        if ($request->image && is_array($request->image) && isset($request->image['image'])) {
 
             $image = new ImageController();
-            foreach ($request->images as $value) {
+            foreach ($request->image as $value) {
 
                 if ($value["image"] == null || $image->existFile($value["image"])) {
                     $imageFind = $value["id"] ? $product->image()->find($value['id']) : false;

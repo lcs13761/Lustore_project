@@ -23,6 +23,8 @@ class AuthController extends Controller
         $user = User::find(auth()->user()->id);
         $this->response["verifiedEmail"] = $user->hasVerifiedEmail() ? "true" : "false";
         $this->response["token"] = $token;
+        $this->response["name"] = auth()->user()->name;
+        $this->response["user"] = auth()->user()->id;
         $this->response["level"] = auth()->user()->level;
         return $this->response;
     }

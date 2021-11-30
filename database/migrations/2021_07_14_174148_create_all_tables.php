@@ -35,6 +35,7 @@ class CreateAllTables extends Migration
         Schema::create("address", function (Blueprint $table) {
             $table->id()->autoIncrement()->unique();
             $table->string('cep')->nullable();
+            $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('district')->nullable();
             $table->string('street')->nullable();

@@ -78,7 +78,19 @@ class SaleController extends Controller
      */
     public function update(SaleRequest $request, Sale $sale): Response|JsonResponse
     {
-        abort_if(!$sale->update($request->all()), 500, "Error");
+        $product = Product::find($sale->product_id);
+
+        if($request->qts > $sale->qts) {
+            $newQts = $request->qts - $sale->qts;
+            $product->qts -= $newQts;
+        }
+        if($request->qts < $sale->qts && $request->qts > 0) {
+            $newQts = $sale->qts - $request->qts;
+            $product->qts += $newQts;
+        
+        }
+
+        abort_if(!$sale->update($request->all()) || !$product->save(), 500, "Error");
         Log::info("Product created successfully.");
         $this->response["result"] = "sucesso ao modificar";
         return response()->json($this->response);
@@ -92,7 +104,9 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale): Response|JsonResponse
     {
-        abort_if(!$sale->delete(), 500, "Error ao excluir.");
+        $product = Product::find($sale->product_id);
+        $product->qts += $sale->qts;
+        abort_if(!$sale->delete() || !$product->save(), 500, "Error ao excluir.");
         Log::info("Product removed successfully.");
         $this->response["result"] = "sucesso";
         return response()->json($this->response);

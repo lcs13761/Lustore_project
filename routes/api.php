@@ -36,7 +36,7 @@ Route::post("/forget", [PasswordController::class, "forgotPassword"]);
 Route::post("/reset-password", [PasswordController::class, "changePassword"]);
 Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
 
-Route::apiResource('user',UserController::class)->except(["show", "destroy"]);
+Route::apiResource('user',UserController::class)->except(["destroy"]);
 Route::apiResource('product',ProductController::class);
 Route::apiResource('category',CategoryController::class);
 Route::apiResource('sale',SaleController::class)->middleware("auth:api");

@@ -25,7 +25,8 @@ class UserController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(Auth::user());
+        $user = User::with('address');
+        return response()->json($user->get());
     }
 
     /**
@@ -39,7 +40,9 @@ class UserController extends Controller
         $created = User::create([
             "name" => $request->name,
             "email" => $request->email,
-            "password" => Hash::make($request->password)
+            "password" => $request->password,
+            'level' => $request->level
+            
         ]);
         if (!empty($request->address) && is_array($request->address))$created->address()->create($request->address);
         event(new Registered($created));
@@ -54,8 +57,9 @@ class UserController extends Controller
      * @return Response
      */
     public function show(User $user)
-    {
-       // return response()->json($user, 200);
+    {   
+            $this->userValidate($user->id);
+            return response()->json($user->loadMissing('address'));
     }
 
     /**
@@ -68,7 +72,7 @@ class UserController extends Controller
     public function update(UserRequest $request, User $user): Response|JsonResponse
     {
         $this->userValidate($user->id);
-        $request->validated();
+
         $user->update($request->except(["address","level"]));
         if (!empty($request->address)) $user->address()->updateOrCreate(["user_id" => $user->id], $request->address);
         $this->response["result"] = "Usuario modificado om sucesso.";

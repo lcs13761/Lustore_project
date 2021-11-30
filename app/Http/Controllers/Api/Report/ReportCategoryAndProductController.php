@@ -18,24 +18,24 @@ class ReportCategoryAndProductController extends Controller
     if ($categoyYearSales->isNotEmpty()) {
 
       $this->calculateCategoryMoreSales($categoyYearSales);
+      $this->response["result"]["categories"] = $this->categories;
+      $this->response["result"]["products"] = $this->products;
     }
-    $this->response["result"]["categories"] = $this->categories;
-    $this->response["result"]["products"] = $this->products;
     return $this->response;
   }
 
   private function calculateCategoryMoreSales($categoriesAndProducts)
   {
     foreach ($categoriesAndProducts as $value) {
-      if (!isset($this->categories[$value["category"]])) {
-        $this->categories[$value["category"]] =  0;
+      if (!isset($this->categories[$value["category"]['category']])) {
+        $this->categories[$value["category"]['category']] =  0;
       }
       if (!isset($this->categories[$value["product"]])) {
         $this->products[$value["product"]] =  0;
       }
 
       $this->allQts += $value["qts"];
-      $this->categories[$value["category"]] = $this->categories[$value["category"]] + $value["qts"];
+      $this->categories[$value["category"]['category']] = $this->categories[$value["category"]['category']] + $value["qts"];
       $this->products[$value["product"]] +=  $value["qts"];
     }
     foreach ($this->categories as $key => $value) {

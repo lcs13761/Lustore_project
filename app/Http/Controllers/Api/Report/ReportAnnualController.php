@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Api\Report;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Historic;
 
 class ReportAnnualController extends Controller
 {
     public function index()
     {
-        $annualProfit = Category::join('historicsales', 'historicsales.category_id', "=", "categories.id")->select("categories.*", "historicsales.*")->get();
-        $this->response["result"] = $this->annualProfitCalculations($annualProfit);
+        $annualProfit = Historic::with('category')->get();
+        if($annualProfit->isNotEmpty()){
+            $this->response["result"] = $this->annualProfitCalculations($annualProfit);
+        }
         return Response()->json($this->response, 200);
     }
 

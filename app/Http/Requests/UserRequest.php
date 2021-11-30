@@ -29,7 +29,7 @@ class UserRequest extends FormRequest
                 return [
                     "name" => ["required", "string"],
                     "email" => ["required", "email:rfc,dns","unique:users,email"],
-                    "password" => ["required", Password::min(8)->letters()
+                    "password" => ["required","confirmed", Password::min(8)->letters()
                     ->mixedCase()
                     ->numbers()
                     ->symbols()]
@@ -47,8 +47,9 @@ class UserRequest extends FormRequest
                         ->numbers()
                         ->symbols()],
                         "cpf" => ["required", "cpf"],
-                        "address" => "nullable|array|size:6",
+                        "address" => "nullable|array",
                         "address.cep" => ["required", "formato_cep"],
+                        "address.city" => ["required", "string"],
                         "address.state" => ["required", "uf", "string", "size:2"],
                         "address.district" => ["required", "string"],
                         "address.street" => ["required", "string"],
@@ -59,5 +60,12 @@ class UserRequest extends FormRequest
             default:
             break;
         }
+    }
+
+    public function messages(){
+
+        return [
+            'password.min' => 'A senha deve conter no minimo 8 caracteres',
+        ];
     }
 }
