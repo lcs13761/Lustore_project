@@ -9,7 +9,9 @@ use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
@@ -25,9 +27,17 @@ class ProductController extends Controller
      *
      * @return JsonResponse|Response
      */
-    public function index(): Response|JsonResponse
+    public function index(Request $request): Response|JsonResponse
     {
         $product = Product::with(["image", "category"]);
+        if($request->product){
+            $product =  $product->where('product','LIKE',"%" . $request->product . "%")->get();
+            return (new ProductCollection($product))->response();
+        }
+        if($request->all){
+            return (new ProductCollection($product->get()))->response();
+        }
+
         return (new ProductCollection($product->paginate(10)))->response();
     }
 
@@ -101,7 +111,7 @@ class ProductController extends Controller
 
         abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
 
-        if ($request->image && is_array($request->image) && isset($request->image['image'])) {
+        if ($request->image && is_array($request->image)) {
 
             $image = new ImageController();
             foreach ($request->image as $value) {

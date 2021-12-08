@@ -16,7 +16,7 @@ class Controller extends BaseController
 
     protected function userValidate(int $user)
     {
-        abort_if(Auth::user()->id != $user, 403, "Não autorizado.");
+        abort_if(Auth::user()->id != $user && $this->token()->level != 5 , 403, "Não autorizado.");
     }
 
     protected function token()

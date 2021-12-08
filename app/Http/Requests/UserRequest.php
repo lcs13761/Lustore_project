@@ -24,6 +24,8 @@ class UserRequest extends FormRequest
      */
     public function rules()
     {
+
+       
         switch($this->method()){
             case 'POST': {
                 return [
@@ -32,7 +34,15 @@ class UserRequest extends FormRequest
                     "password" => ["required","confirmed", Password::min(8)->letters()
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()]
+                    ->symbols()],
+                    "address" => "nullable|array",
+                        "address.cep" => ["nullable", "formato_cep"],
+                        "address.city" => ["nullable", "string"],
+                        "address.state" => ["nullable", "uf", "string", "size:2"],
+                        "address.district" => ["nullable", "string"],
+                        "address.street" => ["nullable", "string"],
+                        "address.number" => ["nullable", "integer"],
+                        "address.complement" => ["nullable"]
                 ];
             }
             case 'PUT': 
@@ -40,20 +50,19 @@ class UserRequest extends FormRequest
                     return [
                         "photo" => ["nullable", "file"],
                         "name" => ["required", "string"],
-                        "email" => ["required", "email:rfc,dns", "unique:users,email," . $this->user()->id . ",id"],
+                        "email" => ["required", "email:rfc,dns", "unique:users,email," .$this->route('user')->id  . ",id"],
                         "current_password" => ["nullable", "current_password:api"],
                         "password" => ["nullable", "confirmed", Password::min(8)->letters()
                         ->mixedCase()
                         ->numbers()
                         ->symbols()],
-                        "cpf" => ["required", "cpf"],
                         "address" => "nullable|array",
-                        "address.cep" => ["required", "formato_cep"],
-                        "address.city" => ["required", "string"],
-                        "address.state" => ["required", "uf", "string", "size:2"],
-                        "address.district" => ["required", "string"],
-                        "address.street" => ["required", "string"],
-                        "address.number" => ["required", "integer"],
+                        "address.cep" => ["nullable", "formato_cep"],
+                        "address.city" => ["nullable", "string"],
+                        "address.state" => ["nullable", "uf", "string", "size:2"],
+                        "address.district" => ["nullable", "string"],
+                        "address.street" => ["nullable", "string"],
+                        "address.number" => ["nullable", "integer"],
                         "address.complement" => ["nullable"]
                     ];
                 }

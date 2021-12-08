@@ -44,6 +44,6 @@ class ImageController extends Controller{
 
   private function format(string $format): array|string
   {
-    return str_replace("http://localhost/storage/", "", $format);
+    return str_replace("http://192.168.1.105/storage/", "", $format);
   }
 }

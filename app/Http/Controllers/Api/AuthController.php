@@ -13,7 +13,10 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         
-        $token = Auth::attempt($request->all());
+        $token = Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ]);
 
         if (!$token) {
             $this->response["error"] = "Email e/ou senha invalido!";
@@ -24,7 +27,7 @@ class AuthController extends Controller
         $this->response["verifiedEmail"] = $user->hasVerifiedEmail() ? "true" : "false";
         $this->response["token"] = $token;
         $this->response["name"] = auth()->user()->name;
-        $this->response["user"] = auth()->user()->id;
+        $this->response["id"] = auth()->user()->id;
         $this->response["level"] = auth()->user()->level;
         return $this->response;
     }

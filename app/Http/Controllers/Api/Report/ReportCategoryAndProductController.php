@@ -30,7 +30,7 @@ class ReportCategoryAndProductController extends Controller
       if (!isset($this->categories[$value["category"]['category']])) {
         $this->categories[$value["category"]['category']] =  0;
       }
-      if (!isset($this->categories[$value["product"]])) {
+      if (!isset($this->products[$value["product"]])) {
         $this->products[$value["product"]] =  0;
       }
 

@@ -37,13 +37,7 @@ class UserController extends Controller
      */
     public function store(UserRequest $request): Response|JsonResponse
     {
-        $created = User::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => $request->password,
-            'level' => $request->level
-            
-        ]);
+        $created = User::create($request->all());
         if (!empty($request->address) && is_array($request->address))$created->address()->create($request->address);
         event(new Registered($created));
         $this->response["result"] = "Verifique sua caixa de email para confirmar a sua conta.";
@@ -71,6 +65,7 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user): Response|JsonResponse
     {
+
         $this->userValidate($user->id);
 
         $user->update($request->except(["address","level"]));
@@ -87,6 +82,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        abort_if(Auth::user()->id != 1,500);
+        abort_if($user->level != 5 ,500);
+        $user->delete();
+        $this->response["result"] = "Usuario removido com sucesso.";
+        return response()->json($this->response, 200);
     }
 }

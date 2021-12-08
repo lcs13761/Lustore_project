@@ -27,7 +27,7 @@ class CategoryController extends Controller
      */
     public function index(): Response|JsonResponse
     {
-        $category = Category::paginate();
+        $category = Category::all();
         return (new CategoryCollection($category))->response();
     }
 
@@ -41,10 +41,10 @@ class CategoryController extends Controller
     {
         $this->levelAccess();
         $request->validated();
-        abort_if(!Category::create($request->all()),500,"Error");
+        abort_if(!Category::create($request->all()), 500, "Error");
         Log::info("category created successfully.");
         $this->response["result"] = "sucesso";
-        return response()->json($this->response,200);
+        return response()->json($this->response, 200);
     }
 
     /**
@@ -69,10 +69,10 @@ class CategoryController extends Controller
     {
         $this->levelAccess();
         $request->validated();
-        abort_if(!$category->update($request->all()),500,"Error");
+        abort_if(!$category->update($request->all()), 500, "Error");
         Log::info("category updated successfully.");
         $this->response["result"] = "sucesso";
-        return response()->json($this->response,200);
+        return response()->json($this->response, 200);
     }
 
     /**
@@ -83,9 +83,13 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): Response|JsonResponse
     {
-        abort_if(!$category->delete(),500,"Error");
-        Log::info("category deleted successfully.");
-        $this->response["result"] = "sucesso";
-        return response()->json($this->response,200);
+        try {
+            $category->delete();
+            $this->response["result"] = "sucesso";
+        } catch (\Exception $e) {
+            $this->response["error"] = "Não é possivel excluir a categoria.";
+        }
+
+        return response()->json($this->response, 500);
     }
 }

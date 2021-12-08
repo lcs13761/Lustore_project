@@ -79,7 +79,6 @@ class SaleController extends Controller
     public function update(SaleRequest $request, Sale $sale): Response|JsonResponse
     {
         $product = Product::find($sale->product_id);
-
         if($request->qts > $sale->qts) {
             $newQts = $request->qts - $sale->qts;
             $product->qts -= $newQts;

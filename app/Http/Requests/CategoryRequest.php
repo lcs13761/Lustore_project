@@ -23,8 +23,24 @@ class CategoryRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            "category" => "required|string",
-        ];
+        switch ($this->method()) {
+            case 'POST':
+                {
+                    return [
+                        "category" => ["required","string" ,"unique:categories,category,except,id"],
+                    ];
+                }
+            case 'PUT':
+                case 'PATCH':{
+                    return [
+                        "category" => ["required","string" ,"unique:categories,category,".$this->route('category')->id .",id"],
+                    ];
+                }
+                
+            default:
+                # code...
+                break;
+        }
+
     }
 }
