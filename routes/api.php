@@ -45,7 +45,7 @@ Route::apiResource('historic', HistoricController::class)->except(["show","updat
 Route::post("/upload",[ImageController::class,"store"]);
 
 
-Route::middleware('auth:api')->group(function(){
+// Route::middleware('auth:api')->group(function(){
 
   Route::prefix('report')->group(function(){
     Route::get('/sale',[ReportSalesController::class,'index']);
@@ -53,5 +53,5 @@ Route::middleware('auth:api')->group(function(){
     Route::get('/sale/annual',[ReportAnnualController::class,'index']);
   });
 
-});
+// });
 

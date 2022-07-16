@@ -4,22 +4,23 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\ProductStoreRequest;
+use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
 
-    public function __construct()
+    public function __construct(private readonly ProductService $productService)
     {
-       // $this->middleware("auth:api");
     }
 
     /**
@@ -30,11 +31,11 @@ class ProductController extends Controller
     public function index(Request $request): Response|JsonResponse
     {
         $product = Product::with(["image", "category"]);
-        if($request->product){
-            $product =  $product->where('product','LIKE',"%" . $request->product . "%")->get();
+        if ($request->product) {
+            $product =  $product->where('product', 'LIKE', "%" . $request->product . "%")->get();
             return (new ProductCollection($product))->response();
         }
-        if($request->all){
+        if ($request->all) {
             return (new ProductCollection($product->get()))->response();
         }
 
@@ -44,35 +45,25 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StorePostRequest $request
+     * @param ProductStoreRequest $request
      * @return JsonResponse|Response
      */
-    public function store(ProductRequest $request)
+    public function store(ProductStoreRequest $request)
     {
         $this->levelAccess();
 
-        $product = Product::create([
-            "code" => $request->code, 
-            "product" => $request->product, 
-            "category_id" => $request->category["id"],
-            "saleValue" => $request->saleValue, 
-            "costValue" => $request->costValue, 
-            "size" => $request->size, 
-            "qts" => $request->qts,
-            "description" => $request->description
-        ]);
+        $product = $this->productService->create($request);
 
         abort_if(!$product, 500, "Error ao registra o produto");
         if ($request->image && is_array($request->image)) {
-        
+
             foreach ($request->image as $image) {
-                if(isset($image['image'])){
+                if (isset($image['image'])) {
                     $product->image()->create($image);
                 }
-                
             }
         }
-        Log::info("Product created successfully.");
+
         $this->response["result"] = "sucesso";
         return response()->json($this->response);
     }
@@ -91,20 +82,20 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param StorePutRequest $request
+     * @param ProductUpdateRequest $request
      * @param Product $product
      * @return JsonResponse|Response
      */
-    public function update(ProductRequest $request, Product $product): Response|JsonResponse
+    public function update(ProductUpdateRequest $request, Product $product): Response|JsonResponse
     {
         $this->levelAccess();
         $update = [
-            "code" => $request->code, 
-            "product" => $request->product, 
+            "code" => $request->code,
+            "product" => $request->product,
             "category_id" => $request->category["id"],
-            "saleValue" => $request->saleValue, 
-            "costValue" => $request->costValue, 
-            "size" => $request->size, 
+            "saleValue" => $request->saleValue,
+            "costValue" => $request->costValue,
+            "size" => $request->size,
             "qts" => $request->qts,
             "description" => $request->description
         ];
