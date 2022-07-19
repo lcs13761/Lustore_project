@@ -9,24 +9,49 @@ use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Hash;
 
-
-class User extends Authenticatable implements JWTSubject, MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
-    protected $hidden = ["password" , "created_at" , "updated_at"];
     protected $table = 'users';
-    protected $fillable = ["photo","name","email","cpf","level","phone","password"];
-    protected $casts = 
-    [
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        "photo",
+        "name",
+        "email",
+        "cpf",
+        "active",
+        "phone",
+        "password",
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        "password",
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function setPasswordAttribute($value){
-        $this->attributes['password'] = Hash::make($value);
-    }
-
-    public function address(){
+    public function address()
+    {
         return $this->hasMany(Address::class);
     }
 
@@ -45,5 +70,4 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
             ]
         ];
     }
-
 }

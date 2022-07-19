@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Auth\MailController;
 use App\Http\Controllers\Api\Auth\PasswordController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\Api\Report\ReportAnnualController;
 use App\Http\Controllers\Api\Report\ReportCategoryAndProductController;
 use App\Http\Controllers\Api\Report\ReportSalesController;
 use App\Http\Controllers\Api\SaleController;
+use App\Http\Controllers\Api\User\UserController;
 
 /*
 |--------------------------------------------------------------------------

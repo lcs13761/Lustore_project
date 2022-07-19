@@ -18,13 +18,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $created = User::create([
-            "name" => "admin",
-            "email" => "lks137610@gmail.com",
-            "password" => "password123",
-            "level" => "5"
+        $this->call([
+            UserSeeder::class,
+            //OrdersSeeder::class,
         ]);
-
-        event(new Registered($created));
     }
 }

@@ -30,16 +30,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): Response|JsonResponse
     {
-        $product = Product::with(["image", "category"]);
-        if ($request->product) {
-            $product =  $product->where('product', 'LIKE', "%" . $request->product . "%")->get();
-            return (new ProductCollection($product))->response();
-        }
-        if ($request->all) {
-            return (new ProductCollection($product->get()))->response();
-        }
-
-        return (new ProductCollection($product->paginate(10)))->response();
+        return (new ProductCollection($this->productService->all()))->response();
     }
 
     /**
@@ -50,8 +41,6 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        $this->levelAccess();
-
         $product = $this->productService->create($request);
 
         abort_if(!$product, 500, "Error ao registra o produto");
