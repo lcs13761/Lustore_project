@@ -37,13 +37,14 @@ class UserService
      * Undocumented function
      *
      * @param [type] $request
-     * @return void
+     * @return User
      */
     public function create($request)
     {
-        $this->user = $this->user->create($request->safe()->all());
-        $request->get('address') ?: $this->HandleAddress($request->address);
-        return $this->user;
+
+        $user = $this->user->create($request->safe()->all());
+        !$request->input('address') ?: $this->HandleAddress($user, $request->address);
+        return $user;
     }
 
     /**
@@ -55,8 +56,8 @@ class UserService
      */
     public function update($request, int $id)
     {
-        $this->user = $this->find($id)->update($request->safe()->all());
-        $request->get('address') ?: $this->HandleAddress($request->address);
+        $user = $this->find($id)->update($request->safe()->all());
+        $request->input('address') ?: $this->HandleAddress($user, $request->address);
     }
 
     /**
@@ -75,9 +76,9 @@ class UserService
      * @param [type] $address
      * @return void
      */
-    public function HandleAddress($address)
+    public function HandleAddress($user, $address)
     {
-        $data = array(["user_id" => $this->user->id], $address);
-        $this->user->address()->updateOrCreate($data);
+        $data = array(["user_id" => $user->id], $address);
+        $user->address()->updateOrCreate($data);
     }
 }

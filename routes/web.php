@@ -21,7 +21,7 @@ use PhpParser\Node\Stmt\Break_;
 
 Route::get('/', function () {
 
- 
+
 
 
 
@@ -29,7 +29,7 @@ Route::get('/', function () {
 
 
 Route::get('/retrieve_password/{token}', [AuthForgotController::class, "retrievePassword"])->name('password.reset');
-Route::post('/reset-password', [PasswordController::class, "changePassword"]);
+// Route::post('/reset-password', [PasswordController::class, "changePassword"]);
 
 Route::get('/email/verify', [VerifyEmail::class, "verificationEmail"])->name('verification.notice');
 Route::get('/verification-email/{id}/{hash}', [VerifyEmail::class, "verificationEmail"])->middleware(['signed'])->name('verification.verify');

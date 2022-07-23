@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Product;
 
 
 use App\Http\Controllers\Controller;
@@ -10,7 +10,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
-use App\Services\ProductService;
+use App\Services\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -75,40 +75,40 @@ class ProductController extends Controller
      * @param Product $product
      * @return JsonResponse|Response
      */
-    public function update(ProductUpdateRequest $request, Product $product): Response|JsonResponse
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        $this->levelAccess();
-        $update = [
-            "code" => $request->code,
-            "product" => $request->product,
-            "category_id" => $request->category["id"],
-            "saleValue" => $request->saleValue,
-            "costValue" => $request->costValue,
-            "size" => $request->size,
-            "qts" => $request->qts,
-            "description" => $request->description
-        ];
+        // $this->levelAccess();
+        // $update = [
+        //     "code" => $request->code,
+        //     "product" => $request->product,
+        //     "category_id" => $request->category["id"],
+        //     "saleValue" => $request->saleValue,
+        //     "costValue" => $request->costValue,
+        //     "size" => $request->size,
+        //     "qts" => $request->qts,
+        //     "description" => $request->description
+        // ];
 
-        abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
+        // abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
 
-        if ($request->image && is_array($request->image)) {
+        // if ($request->image && is_array($request->image)) {
 
-            $image = new ImageController();
-            foreach ($request->image as $value) {
+        //     $image = new ImageController();
+        //     foreach ($request->image as $value) {
 
-                if ($value["image"] == null || $image->existFile($value["image"])) {
-                    $imageFind = $value["id"] ? $product->image()->find($value['id']) : false;
-                    if ($imageFind && $imageFind->image != $value["image"]) {
-                        $image->destroy($imageFind->image);
-                    }
-                    $value["image"] ? $product->image()->updateOrCreate(["id" => $value["id"]], $value) : $imageFind->delete();
-                }
-            }
-        }
+        //         if ($value["image"] == null || $image->existFile($value["image"])) {
+        //             $imageFind = $value["id"] ? $product->image()->find($value['id']) : false;
+        //             if ($imageFind && $imageFind->image != $value["image"]) {
+        //                 $image->destroy($imageFind->image);
+        //             }
+        //             $value["image"] ? $product->image()->updateOrCreate(["id" => $value["id"]], $value) : $imageFind->delete();
+        //         }
+        //     }
+        // }
 
-        Log::info("Product update successfully.");
-        $this->response["result"] = "sucesso";
-        return response()->json($this->response);
+        // Log::info("Product update successfully.");
+        // $this->response["result"] = "sucesso";
+        // return response()->json($this->response);
     }
 
     /**
@@ -116,19 +116,19 @@ class ProductController extends Controller
      * @param Product $product
      * @return JsonResponse
      */
-    public function destroy(Product $product): JsonResponse
+    public function destroy(Product $product)
     {
-        $images = $product->image()->getResults();
-        if ($images) {
-            $imageController = new ImageController();
-            foreach ($images as $value) {
+        // $images = $product->image()->getResults();
+        // if ($images) {
+        //     $imageController = new ImageController();
+        //     foreach ($images as $value) {
 
-                if ($imageController->existFile($value->image)) $imageController->destroy($value->image);
-            }
-        }
-        abort_if(!$product->delete(), 500, "Error ao excluir.");
-        Log::info("Product removed successfully.");
-        $this->response["result"] = "sucesso";
-        return response()->json($this->response);
+        //         if ($imageController->existFile($value->image)) $imageController->destroy($value->image);
+        //     }
+        // }
+        // abort_if(!$product->delete(), 500, "Error ao excluir.");
+        // Log::info("Product removed successfully.");
+        // $this->response["result"] = "sucesso";
+        // return response()->json($this->response);
     }
 }

@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 
-
-class AuthController extends Controller
+class AuthenticatedController extends Controller
 {
-    public function login(Request $request)
+    public function AuthenticatedController(Request $request)
     {
-        
+
         $token = Auth::attempt([
             'email' => $request->email,
             'password' => $request->password
@@ -32,15 +31,11 @@ class AuthController extends Controller
         return $this->response;
     }
 
-    public function logout()
+    public function destroy(Request $request)
     {
-        if (Auth::check()) {
-            Auth::logout();
-            $this->response["result"] =  "voce saiu com sucesso";
-            return Response()->json($this->response, 200);
-        }
-        $this->response["error"] = "erro ao deslogar";
-        return Response()->json($this->response, 400);
+        Auth::logout();
+        $this->response["result"] =  "voce saiu com sucesso";
+        return response()->json($this->response, 200);
     }
 
     public function refresh()

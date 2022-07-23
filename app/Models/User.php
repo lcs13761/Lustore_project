@@ -14,8 +14,6 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory;
     use Notifiable;
 
-    protected $table = 'users';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -55,19 +53,19 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Address::class);
     }
 
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
+    // public function getJWTIdentifier()
+    // {
+    //     return $this->getKey();
+    // }
 
-    public function getJWTCustomClaims()
-    {
-        return [
-            'user' => [
-                'name' => $this->name,
-                'email' => $this->email,
-                "level" => $this->level
-            ]
-        ];
-    }
+    // public function getJWTCustomClaims()
+    // {
+    //     return [
+    //         'user' => [
+    //             'name' => $this->name,
+    //             'email' => $this->email,
+    //             "level" => $this->level
+    //         ]
+    //     ];
+    // }
 }

@@ -26,13 +26,10 @@ class UserStoreRequest extends FormRequest
     {
         return [
             "name" => ["required", "string"],
-            "email" => ["required", "email:rfc,dns", "unique:users,email"],
-            "password" => ["required", "confirmed", Password::min(8)->letters()
-                ->mixedCase()
-                ->numbers()
-                ->symbols()],
+            "email" => ["required", "email", "unique:users,email"],
+            "password" => ["required", "confirmed"],
             "address" => "nullable|array",
-            "address.cep" => ["nullable", "formato_cep"],
+            "address.cep" => ["nullable"],
             "address.city" => ["nullable", "string"],
             "address.state" => ["nullable", "uf", "string", "size:2"],
             "address.district" => ["nullable", "string"],

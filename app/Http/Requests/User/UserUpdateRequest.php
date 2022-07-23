@@ -24,10 +24,12 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->route('user');
+
         return [
             "photo" => ["nullable", "file"],
             "name" => ["required", "string"],
-            "email" => ["required", "email:rfc,dns", "unique:users,email," . $this->route('user')->id  . ",id"],
+            "email" => ["required", "email", "unique:users,email,$id"],
             "current_password" => ["nullable", "current_password:api"],
             "password" => ["nullable", "confirmed", Password::min(8)->letters()
                 ->mixedCase()

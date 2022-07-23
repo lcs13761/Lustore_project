@@ -4,10 +4,10 @@ use App\Http\Controllers\Api\HistoricController;
 use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\ProductController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Auth\MailController;
-use App\Http\Controllers\Api\Auth\PasswordController;
+use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Auth\AuthenticatedController;
+use App\Http\Controllers\Auth\MailController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Api\Report\ReportAnnualController;
 use App\Http\Controllers\Api\Report\ReportCategoryAndProductController;
 use App\Http\Controllers\Api\Report\ReportSalesController;
@@ -26,32 +26,31 @@ use App\Http\Controllers\Api\User\UserController;
 */
 
 
-Route::get("/401", [AuthController::class, "unauthenticated"])->name('login');
-Route::post("/login", [AuthController::class, "login"]);
-Route::post("/logout", [AuthController::class, "logout"])->middleware('auth:api');
-Route::post("/refresh", [AuthController::class, "refresh"]);
+Route::get("/401", [AuthenticatedController::class, "unauthenticated"])->name('login');
+Route::post("/login", [AuthenticatedController::class, "login"]);
+Route::post("/logout", [AuthenticatedController::class, "logout"])->middleware('auth:api');
+Route::post("/refresh", [AuthenticatedController::class, "refresh"]);
 
 Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
-Route::post("/forget", [PasswordController::class, "forgotPassword"]);
-Route::post("/reset-password", [PasswordController::class, "changePassword"]);
-Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
+// Route::post("/forget", [PasswordController::class, "forgotPassword"]);
+// Route::post("/reset-password", [PasswordController::class, "changePassword"]);
+// Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
 
-Route::apiResource('user',UserController::class);
-Route::apiResource('product',ProductController::class);
-Route::apiResource('category',CategoryController::class);
-Route::apiResource('sale',SaleController::class)->middleware("auth:api");
-Route::apiResource('historic', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
+Route::apiResource('users', UserController::class);
+Route::apiResource('products', ProductController::class);
+// Route::apiResource('categories', CategoryController::class);
+// Route::apiResource('sales', SaleController::class)->middleware("auth:api");
+// Route::apiResource('historics', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
 
-Route::post("/upload",[ImageController::class,"store"]);
+// Route::post("/upload", [ImageController::class,"store"]);
 
 
 // Route::middleware('auth:api')->group(function(){
 
-  Route::prefix('report')->group(function(){
-    Route::get('/sale',[ReportSalesController::class,'index']);
-    Route::get('/product/category',[ReportCategoryAndProductController::class,'index']);
-    Route::get('/sale/annual',[ReportAnnualController::class,'index']);
-  });
+//   Route::prefix('report')->group(function () {
+//       Route::get('/sale', [ReportSalesController::class,'index']);
+//       Route::get('/product/category', [ReportCategoryAndProductController::class,'index']);
+//       Route::get('/sale/annual', [ReportAnnualController::class,'index']);
+//   });
 
 // });
-

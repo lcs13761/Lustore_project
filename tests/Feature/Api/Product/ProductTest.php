@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Api\Product;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class routeUser extends TestCase
+class ProductTest extends TestCase
 {
     /**
      * A basic feature test example.
      *
      * @return void
      */
-    public function route_login_onexpect_code()
+    public function test_example()
     {
         $response = $this->get('/');
 
