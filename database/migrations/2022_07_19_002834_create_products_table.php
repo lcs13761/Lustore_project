@@ -24,6 +24,7 @@ class CreateProductsTable extends Migration
             $table->text("description")->nullable();
             $table->text("size");
             $table->integer('qts');
+            $table->boolean('active')->default(false);
             $table->timestamps();
         });
     }
