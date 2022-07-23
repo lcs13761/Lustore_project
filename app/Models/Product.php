@@ -8,11 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $hidden = ["created_at", "updated_at"];
+
     protected $table = 'products';
-    protected $fillable = ["code", "product", "category_id", "saleValue", "costValue", "size", "qts", "description"];
-
-
+    protected $guarded = ['id'];
 
     public function image()
     {
@@ -24,7 +22,8 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function scopeImageExists($query,$id,$image){
-        return $query->where("id" , $id)->where("image" , $image);
+    public function scopeImageExists($query, $id, $image)
+    {
+        return $query->where("id", $id)->where("image", $image);
     }
 }

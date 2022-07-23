@@ -14,7 +14,8 @@ class ProductFactory extends Factory
     public function definition()
     {
         return [
-            "code" => $this->faker->randomNumber($nbDigits = 9, $strict = false),
+            "code_product" => $this->faker->randomNumber($nbDigits = 9, $strict = false),
+            'barcode' => $this->faker->randomNumber($nbDigits = 9, $strict = false),
             "product" => $this->faker->sentence($nbWords = 4, $variableNbWords = true),
             "category_id" => $this->faker->numberBetween($min = 1, $max = 10),
             "costValue" => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),

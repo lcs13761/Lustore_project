@@ -23,21 +23,21 @@ class ProductUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        $id = request()->route('product');
 
-        $product = explode("/", $this->path())[2];
         return [
-            "code" => "required|integer|unique:products,code," . $product . ",id",
-            "product" => "required|string",
+            "code_product" => "nullable|integer|unique:products,code_product,$id",
+            "barcode" => "nullable|integer|unique:products,barcode,$id",
+            "product" => "nullable|string",
             "images" => "nullable|array",
             "images.id" => "nullable|integer",
             "images.image" => "nullable|string",
-            "category" => "required|array",
-            "category.id" => "required|integer",
-            "costValue" => "required|numeric",
-            "saleValue" => "required|numeric",
+            "category" => "nullable|integer",
+            "costValue" => "nullable|numeric",
+            "saleValue" => "nullable|numeric",
             "description" => "nullable",
-            "size" => "required|string",
-            "qts" => "required|integer"
+            "size" => "nullable|string",
+            "qts" => "nullable|integer"
         ];
     }
 }

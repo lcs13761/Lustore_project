@@ -42,8 +42,9 @@ class ProductService
         return $this->product->create($this->data($request));
     }
 
-    public function update()
+    public function update($request, $id)
     {
+        $this->find($id)->update($request->all());
     }
 
     public function delete()
@@ -58,16 +59,19 @@ class ProductService
      */
     private function data($request): array
     {
-        return [
-            "code" => $request->get('code'),
+        $data = [
+            "code_product" => $request->get('code_product'),
+            'barcode' => $request->get('barcode'),
             "product" => $request->get('product'),
-            "category_id" => $request->get('category.id'),
+            "category_id" => $request->get('category'),
             "saleValue" => $request->get('saleValue'),
             "costValue" => $request->get('costValue'),
             "size" => $request->get('size'),
             "qts" => $request->get('qts'),
             "description" => $request->get('description')
         ];
+
+        return array_filter($data);
     }
 
     private function handlerImagesUpload(array $images)

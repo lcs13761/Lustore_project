@@ -43,15 +43,15 @@ class ProductController extends Controller
     {
         $product = $this->productService->create($request);
 
-        abort_if(!$product, 500, "Error ao registra o produto");
-        if ($request->image && is_array($request->image)) {
+        // abort_if(!$product, 500, "Error ao registra o produto");
+        // if ($request->image && is_array($request->image)) {
 
-            foreach ($request->image as $image) {
-                if (isset($image['image'])) {
-                    $product->image()->create($image);
-                }
-            }
-        }
+        //     foreach ($request->image as $image) {
+        //         if (isset($image['image'])) {
+        //             $product->image()->create($image);
+        //         }
+        //     }
+        // }
 
         $this->response["result"] = "sucesso";
         return response()->json($this->response);
@@ -72,11 +72,12 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param ProductUpdateRequest $request
-     * @param Product $product
+     * @param int  $id
      * @return JsonResponse|Response
      */
-    public function update(ProductUpdateRequest $request, Product $product)
+    public function update(ProductUpdateRequest $request, int $id)
     {
+        $product = $this->productService->update($request,$id);
         // $this->levelAccess();
         // $update = [
         //     "code" => $request->code,

@@ -24,12 +24,12 @@ class ProductStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "code" => "required|integer|unique:products,code",
+            "code_product" => "required|integer|unique:products,code_product",
+            "barcode" => "required|integer|unique:products,barcode",
             "product" => "required",
             "images" => "nullable|array",
             "images.image" => "nullable|string",
-            "category" => "required|array",
-            "category.id" => "required|integer",
+            "category" => "required|integer",
             "costValue" => "required|numeric",
             "saleValue" => "required|numeric",
             "description" => "nullable",
