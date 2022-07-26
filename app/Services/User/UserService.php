@@ -3,14 +3,15 @@
 namespace App\Services\User;
 
 use App\Models\User;
+use App\Repositories\Contracts\UserRepositoryInterface;
 
 class UserService
 {
-    private User $user;
+    private $userRepository;
 
-    public function __construct(User $user)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->user = $user;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -20,7 +21,7 @@ class UserService
      */
     public function all()
     {
-        return $this->user->with('address')->get();
+        return $this->userRepository->getAllUser();
     }
 
     /**
@@ -30,7 +31,7 @@ class UserService
      */
     public function find(int $id)
     {
-        return $this->user->with('address')->find($id);
+        return $this->userRepository->getUserById($id);
     }
 
     /**
@@ -41,8 +42,7 @@ class UserService
      */
     public function create($request)
     {
-
-        $user = $this->user->create($request->safe()->all());
+        $user = $this->userRepository->createUser($request->safe()->all());
         !$request->input('address') ?: $this->HandleAddress($user, $request->address);
         return $user;
     }
@@ -52,12 +52,13 @@ class UserService
      *
      * @param [type] $request
      * @param integer $id
-     * @return void
+     * @return mixed
      */
     public function update($request, int $id)
     {
-        $user = $this->find($id)->update($request->safe()->all());
-        $request->input('address') ?: $this->HandleAddress($user, $request->address);
+        $user = $this->userRepository->getUserById($id);
+        $this->userRepository->updateUser($user, $request->safe()->all());
+        !$request->input('address') ?: $this->HandleAddress($user, $request->address);
     }
 
     /**
@@ -67,7 +68,8 @@ class UserService
      */
     public function destroy(int $id)
     {
-        $this->find($id)->delete();
+        $user = $this->userRepository->getUserById($id);
+        $this->userRepository->destroyUser($user);
     }
 
     /**
@@ -79,6 +81,6 @@ class UserService
     public function HandleAddress($user, $address)
     {
         $data = array(["user_id" => $user->id], $address);
-        $user->address()->updateOrCreate($data);
+        $this->userRepository->updateOrCreateAdressRelationShip($user, $data);
     }
 }

@@ -13,31 +13,11 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     public array $response = ["error" => '', "result" => []];
+    // protected function token()
+    // {
+    //     $token = JWTAuth::getToken();
+    //     $response = JWTAuth::getPayload($token)->toArray();
+    //     return $response["user"];
+    // }
 
-    protected function userValidate(int $user)
-    {
-        abort_if(Auth::user()->id != $user && $this->token()->level != 5 , 403, "Não autorizado.");
-    }
-
-    protected function token()
-    {
-        $token = JWTAuth::getToken();
-        $response = JWTAuth::getPayload($token)->toArray();
-        return $response["user"];
-    }
-
-    protected function levelAccess()
-    {
-        abort_if($this->token()->level != 5, 403, "Não autorizado.");
-    }
-
-    protected function name()
-    {
-        return $this->user()->name;
-    }
-
-    protected function emailAccess()
-    {
-        return $this->token()->email;
-    }
 }

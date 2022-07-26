@@ -12,7 +12,7 @@ class Product extends Model
     protected $table = 'products';
     protected $guarded = ['id'];
 
-    public function image()
+    public function images()
     {
         return $this->hasMany(Image::class);
     }

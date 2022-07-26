@@ -3,17 +3,18 @@
 namespace App\Services\Product;
 
 use App\Models\Product;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Traits\HandlerImages;
 
 class ProductService
 {
     use HandlerImages;
 
-    private $product;
+    private $productRepository;
 
-    public function __construct(Product $product)
+    public function __construct(ProductRepositoryInterface $productRepository)
     {
-        $this->product = $product->with(["image", "category"]);
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -23,7 +24,7 @@ class ProductService
      */
     public function all()
     {
-        return $this->product->get();
+        return $this->productRepository->getAllProducts();
     }
 
     /**
@@ -34,21 +35,42 @@ class ProductService
      */
     public function find(int $id)
     {
-        return $this->product->find($id);
+        return $this->productRepository->getProductById($id);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $request
+     * @return void
+     */
     public function create($request)
     {
-        return $this->product->create($this->data($request));
+        return $this->productRepository->createProduct($this->data($request));
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $request
+     * @param [type] $id
+     * @return void
+     */
     public function update($request, $id)
     {
-        $this->find($id)->update($request->all());
+        $product = $this->productRepository->getProductById($id);
+        $this->productRepository->updateProduct($product,$this->data($request));
     }
 
-    public function delete()
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function delete($id)
     {
+        $product = $this->productRepository->getProductById($id);
+        $this->productRepository->destroyProduct($product);
     }
 
     /**
