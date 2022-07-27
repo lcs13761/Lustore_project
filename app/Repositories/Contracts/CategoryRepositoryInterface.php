@@ -7,9 +7,11 @@ use App\Models\Category;
 
 interface CategoryRepositoryInterface
 {
-    public function getAllCategories();
-    public function getCategoryById(int $id);
-    public function createCategory(array $data);
-    public function updateCategory(Category $category, array $data);
-    public function destroyCategory(Category $category);
+    public function all();
+    public function getAllWithProducts();
+    public function find(int $id);
+    public function findWithProducts(int $id);
+    public function create(array $data);
+    public function update(object $entity, array $data);
+    public function delete(object $entity);
 }

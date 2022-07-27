@@ -10,7 +10,7 @@ use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Product;
-use App\Services\Product\ProductService;
+use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -28,7 +28,7 @@ class ProductController extends Controller
      *
      * @return JsonResponse|Response
      */
-    public function index(Request $request): Response|JsonResponse
+    public function index(): Response|JsonResponse
     {
         return (new ProductCollection($this->productService->all()))->response();
     }
@@ -42,30 +42,19 @@ class ProductController extends Controller
     public function store(ProductStoreRequest $request)
     {
         $product = $this->productService->create($request);
-
-        // abort_if(!$product, 500, "Error ao registra o produto");
-        // if ($request->image && is_array($request->image)) {
-
-        //     foreach ($request->image as $image) {
-        //         if (isset($image['image'])) {
-        //             $product->image()->create($image);
-        //         }
-        //     }
-        // }
-
-        $this->response["result"] = "sucesso";
+        $this->productService->handlerImagesUpload($product, $request);
         return response()->json($this->response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Product $product
+     * @param int $id
      * @return JsonResponse|Response
      */
-    public function show(Product $product): Response|JsonResponse
+    public function show(int $id): Response|JsonResponse
     {
-        return (new ProductResource($product->loadMissing(["image", "category"])))->response();
+        return (new ProductResource($this->productService->findWith($id)))->response();
     }
 
     /**
@@ -77,21 +66,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, int $id)
     {
-        $product = $this->productService->update($request,$id);
-        // $this->levelAccess();
-        // $update = [
-        //     "code" => $request->code,
-        //     "product" => $request->product,
-        //     "category_id" => $request->category["id"],
-        //     "saleValue" => $request->saleValue,
-        //     "costValue" => $request->costValue,
-        //     "size" => $request->size,
-        //     "qts" => $request->qts,
-        //     "description" => $request->description
-        // ];
-
-        // abort_if(!$product->update($request->all()), 500, "Error ao editar o produto");
-
+        $product = $this->productService->update($request, $id);
         // if ($request->image && is_array($request->image)) {
 
         //     $image = new ImageController();
@@ -107,28 +82,18 @@ class ProductController extends Controller
         //     }
         // }
 
-        // Log::info("Product update successfully.");
         // $this->response["result"] = "sucesso";
         // return response()->json($this->response);
     }
 
     /**
      * Remove the specified resource from storage.
-     * @param Product $product
+     * @param int $id
      * @return JsonResponse
      */
-    public function destroy(Product $product)
+    public function destroy(int $id)
     {
-        // $images = $product->image()->getResults();
-        // if ($images) {
-        //     $imageController = new ImageController();
-        //     foreach ($images as $value) {
-
-        //         if ($imageController->existFile($value->image)) $imageController->destroy($value->image);
-        //     }
-        // }
-        // abort_if(!$product->delete(), 500, "Error ao excluir.");
-        // Log::info("Product removed successfully.");
+        $this->productService->delete($id);
         // $this->response["result"] = "sucesso";
         // return response()->json($this->response);
     }

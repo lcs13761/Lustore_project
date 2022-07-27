@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Category;
+namespace App\Services;
 
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 
@@ -19,7 +19,7 @@ class CategoryService
     */
     public function all()
     {
-        return $this->categoryRepository->getAllCategories();
+        return $this->categoryRepository->all();
     }
 
     /**
@@ -29,7 +29,7 @@ class CategoryService
     */
     public function find(int $id)
     {
-        return $this->categoryRepository->getCategoryById($id);
+        return $this->categoryRepository->find($id);
     }
 
     /**
@@ -39,7 +39,7 @@ class CategoryService
     */
     public function create($request)
     {
-        return $this->categoryRepository->createCategory($request->safe()->all());
+        return $this->categoryRepository->create($request->safe()->all());
     }
 
     /**
@@ -50,8 +50,8 @@ class CategoryService
     */
     public function update(int $id, $request)
     {
-        $category = $this->categoryRepository->getCategoryById($id);
-        $this->categoryRepository->updateCategory($category, $request->all());
+        $category = $this->find($id);
+        $this->categoryRepository->update($category, $request->all());
     }
 
     /**
@@ -61,8 +61,8 @@ class CategoryService
     */
     public function destroy(int $id)
     {
-        $category = $this->categoryRepository->getCategoryById($id);
-        $this->categoryRepository->destroyCategory($category);
+        $category = $this->find($id);
+        $this->categoryRepository->delete($category);
 
     }
 }

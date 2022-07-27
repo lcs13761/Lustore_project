@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
@@ -21,7 +21,7 @@ class UserService
      */
     public function all()
     {
-        return $this->userRepository->getAllUser();
+        return $this->userRepository->all();
     }
 
     /**
@@ -31,7 +31,7 @@ class UserService
      */
     public function find(int $id)
     {
-        return $this->userRepository->getUserById($id);
+        return $this->userRepository->find($id);
     }
 
     /**
@@ -42,7 +42,7 @@ class UserService
      */
     public function create($request)
     {
-        $user = $this->userRepository->createUser($request->safe()->all());
+        $user = $this->userRepository->create($request->safe()->all());
         !$request->input('address') ?: $this->HandleAddress($user, $request->address);
         return $user;
     }
@@ -56,8 +56,8 @@ class UserService
      */
     public function update($request, int $id)
     {
-        $user = $this->userRepository->getUserById($id);
-        $this->userRepository->updateUser($user, $request->safe()->all());
+        $user = $this->find($id);
+        $this->userRepository->update($user, $request->safe()->all());
         !$request->input('address') ?: $this->HandleAddress($user, $request->address);
     }
 
@@ -68,8 +68,8 @@ class UserService
      */
     public function destroy(int $id)
     {
-        $user = $this->userRepository->getUserById($id);
-        $this->userRepository->destroyUser($user);
+        $user = $this->find($id);
+        $this->userRepository->delete($user);
     }
 
     /**

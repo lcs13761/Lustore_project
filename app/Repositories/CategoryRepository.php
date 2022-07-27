@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Models\Category;
 
-class CategoryRepository implements CategoryRepositoryInterface
+class CategoryRepository extends AbstractEloquentRepository implements CategoryRepositoryInterface
 {
     protected $entity;
 
@@ -14,52 +14,25 @@ class CategoryRepository implements CategoryRepositoryInterface
         $this->entity = $category;
     }
 
-    /**
-     * Get all Categories
-     * @return array
+     /**
+     * Undocumented function
+     *
+     * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAllCategories()
+    public function getAllWithProducts()
     {
-        return $this->entity->paginate();
+        return $this->entity->with('products')->get();
     }
 
     /**
-     * Seleciona a Categoria por ID
-     * @param int $id
-     * @return object
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return mixed
      */
-    public function getCategoryById(int $id)
+    public function findWithProducts(int $id)
     {
-        return $this->entity->where('id', $id)->with('products')->first();
+        return $this->entity->with('products')->find($id);
     }
 
-    /**
-     * Cria uma nova categoria
-     * @param array $data
-     * @return object
-     */
-    public function createCategory(array $data)
-    {
-        return $this->entity->create($data);
-    }
-
-    /**
-     * Atualiza os dados da categoria
-     * @param object $category
-     * @param array $data
-     * @return object
-     */
-    public function updateCategory(object $category, array $data)
-    {
-        return $category->update($data);
-    }
-
-    /**
-     * Deleta uma categoria
-     * @param object $category
-     */
-    public function destroyCategory(object $category)
-    {
-        return $category->delete();
-    }
 }

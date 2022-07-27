@@ -3,16 +3,15 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\User;
 
-interface UserRepositoryInterface
+interface ImageRepositoryInterface
 {
     public function all();
-    public function getAllWithAddresses();
+    public function getAllWithProduct();
     public function find(int $id);
-    public function findWithAdresses(int $id);
+    public function findWithProduct(int $id);
     public function create(array $data);
     public function update(object $entity, array $data);
     public function delete(object $entity);
-    public function updateOrCreateAdressRelationShip(User $user, array $data);
+    public function getAllImageForProduct(int $id);
 }

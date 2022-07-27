@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Models\Product;
 
-class ProductRepository implements ProductRepositoryInterface
+class ProductRepository extends AbstractEloquentRepository implements ProductRepositoryInterface
 {
 
     protected $entity;
@@ -16,50 +16,65 @@ class ProductRepository implements ProductRepositoryInterface
     }
 
     /**
-     * Get all Products
-     * @return array
+     * Undocumented function
+     *
+     * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAllProducts()
+    public function getAllWithCategory()
     {
-        return $this->entity->with(['category','images'])->paginate();
+        return $this->entity->with('category')->get();
     }
 
     /**
-     * Seleciona o Produto por ID
-     * @param int $id
-     * @return object
+     * Undocumented function
+     *
+     * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getProductById(int $id)
+    public function getAllWithImages()
     {
-        return $this->entity->where('id', $id)->with(['category','images'])->first();
+        return $this->entity->with('images')->get();
     }
 
     /**
-     * Cria um novo Produto
-     * @param array $product
-     * @return Product
+     * Undocumented function
+     *
+     * @return Illuminate\Database\Eloquent\Collection
      */
-    public function createProduct(array $product)
+    public function getAllWith()
     {
-        return $this->entity->create($product);
+        return $this->entity->with(['category', 'images'])->get();
     }
 
     /**
-     * Atualiza um produto
-     * @param Product $product
-     * @param array $data
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return mixed
      */
-    public function updateProduct(Product $product, array $data)
+    public function findWithCategory(int $id)
     {
-        return $product->update($data);
+        return $this->entity->with('category')->find($id);
     }
 
     /**
-     * Deleta um produto
-     * @param Product $product
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return mixed
      */
-    public function destroyProduct(Product $product)
+    public function findWithImages(int $id)
     {
-        return  $product->delete();
+        return $this->entity->with('images')->find($id);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return mixed
+     */
+    public function findWith(int $id)
+    {
+        return $this->entity->with(['category', 'images'])->find($id);
     }
 }

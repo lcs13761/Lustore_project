@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Product;
+namespace App\Services;
 
 use App\Models\Product;
+use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Traits\HandlerImages;
 
@@ -11,10 +12,12 @@ class ProductService
     use HandlerImages;
 
     private $productRepository;
+    private $imageRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository)
+    public function __construct(ProductRepositoryInterface $productRepository, ImageRepositoryInterface $imageRepository)
     {
         $this->productRepository = $productRepository;
+        $this->imageRepository = $imageRepository;
     }
 
     /**
@@ -24,7 +27,7 @@ class ProductService
      */
     public function all()
     {
-        return $this->productRepository->getAllProducts();
+        return $this->productRepository->all();
     }
 
     /**
@@ -35,18 +38,29 @@ class ProductService
      */
     public function find(int $id)
     {
-        return $this->productRepository->getProductById($id);
+        return $this->productRepository->find($id);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param integer $id
+     * @return mixed
+     */
+    public function findWith(int $id)
+    {
+        return $this->productRepository->findWith($id);
     }
 
     /**
      * Undocumented function
      *
      * @param [type] $request
-     * @return void
+     * @return
      */
     public function create($request)
     {
-        return $this->productRepository->createProduct($this->data($request));
+        return $this->productRepository->create($this->data($request));
     }
 
     /**
@@ -58,8 +72,8 @@ class ProductService
      */
     public function update($request, $id)
     {
-        $product = $this->productRepository->getProductById($id);
-        $this->productRepository->updateProduct($product,$this->data($request));
+        $product = $this->find($id);
+        $this->productRepository->update($product, $this->data($request));
     }
 
     /**
@@ -69,8 +83,9 @@ class ProductService
      */
     public function delete($id)
     {
-        $product = $this->productRepository->getProductById($id);
-        $this->productRepository->destroyProduct($product);
+        $this->removeImages($id);
+        $product = $this->find($id);
+        $this->productRepository->delete($product);
     }
 
     /**
@@ -96,7 +111,27 @@ class ProductService
         return array_filter($data);
     }
 
-    private function handlerImagesUpload(array $images)
+    public function handlerImagesUpload($product, $request)
     {
+        if (!$request->get('image')) {
+            return;
+        }
+
+        collect($request->get('images'))->each(function ($image) use ($product) {
+            $data = ['image' => $image, 'product_id' => $product->id];
+            $this->imageRepository->create($data);
+        });
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    private function removeImages(int $id)
+    {
+        $images = $this->imageRepository->getAllImageForProduct($id);
+
+        $images->each(fn ($image) => $this->delete($image));
     }
 }

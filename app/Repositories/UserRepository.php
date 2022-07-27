@@ -5,9 +5,8 @@ namespace App\Repositories;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository extends AbstractEloquentRepository implements UserRepositoryInterface
 {
-
     protected $entity;
 
     public function __construct(User $user)
@@ -16,51 +15,24 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Get all Products
-     * @return array
+     * Undocumented function
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAllUser()
+    public function getAllWithAddresses()
     {
-        return $this->entity->with('address')->paginate();
+        return $this->entity->with('address')->get();
     }
 
     /**
-     * Seleciona o Produto por ID
-     * @param int $id
+     * Undocumented function
+     *
+     * @param integer $id
      * @return object
      */
-    public function getUserById(int $id)
+    public function findWithAdresses(int $id)
     {
-        return $this->entity->where('id', $id)->with('address')->first();
-    }
-
-    /**
-     * Cria um novo Produto
-     * @param User $user
-     * @return User
-     */
-    public function createUser(array $user)
-    {
-        return $this->entity->create($user);
-    }
-
-    /**
-     * Atualiza um produto
-     * @param User $user
-     * @param int
-     */
-    public function updateUser(User $user, array $data)
-    {
-        return $user->update($data);
-    }
-
-    /**
-     * Deleta um produto
-     * @param User $user
-     */
-    public function destroyUser(User $user)
-    {
-        return $user->delete();
+        return $this->entity->with('address')->find($id);
     }
 
     /**
