@@ -14,4 +14,5 @@ interface ImageRepositoryInterface
     public function update(object $entity, array $data);
     public function delete(object $entity);
     public function getAllImageForProduct(int $id);
+    public function updateOrCreate(array $verify, array $data);
 }

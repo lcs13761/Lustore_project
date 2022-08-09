@@ -46,4 +46,9 @@ class ImageRepository extends AbstractEloquentRepository implements ImageReposit
     {
         return $this->entity->where('product_id', $id)->get();
     }
+
+    public function updateOrCreate(array $verify, array $data)
+    {
+        return $this->entity->updateOrCreate($verify, $data);
+    }
 }

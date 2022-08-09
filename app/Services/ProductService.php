@@ -72,8 +72,7 @@ class ProductService
      */
     public function update($request, $id)
     {
-        $product = $this->find($id);
-        $this->productRepository->update($product, $this->data($request));
+        $this->productRepository->update($this->find($id), $this->data($request));
     }
 
     /**
@@ -84,8 +83,8 @@ class ProductService
     public function delete($id)
     {
         $this->removeImages($id);
-        $product = $this->find($id);
-        $this->productRepository->delete($product);
+
+        $this->productRepository->delete($this->find($id));
     }
 
     /**
@@ -111,15 +110,27 @@ class ProductService
         return array_filter($data);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $product
+     * @param [type] $request
+     * @return void
+     */
     public function handlerImagesUpload($product, $request)
     {
-        if (!$request->get('image')) {
-            return;
-        }
+        collect($request->get('images', []))->each(function ($image) use ($product) {
 
-        collect($request->get('images'))->each(function ($image) use ($product) {
-            $data = ['image' => $image, 'product_id' => $product->id];
-            $this->imageRepository->create($data);
+            if ($product->images) {
+                collect($product->images)->each(function ($data) use ($image) {
+                    $data->image === $image['url'] ?: $this->deleteImage($data->image);
+                });
+            }
+
+            $this->imageRepository->updateOrCreate(
+                ['id' => $image['id']],
+                ['image' => $image['url'], 'product_id' => $product->id]
+            );
         });
     }
 

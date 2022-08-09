@@ -67,20 +67,8 @@ class ProductController extends Controller
     public function update(ProductUpdateRequest $request, int $id)
     {
         $product = $this->productService->update($request, $id);
-        // if ($request->image && is_array($request->image)) {
 
-        //     $image = new ImageController();
-        //     foreach ($request->image as $value) {
-
-        //         if ($value["image"] == null || $image->existFile($value["image"])) {
-        //             $imageFind = $value["id"] ? $product->image()->find($value['id']) : false;
-        //             if ($imageFind && $imageFind->image != $value["image"]) {
-        //                 $image->destroy($imageFind->image);
-        //             }
-        //             $value["image"] ? $product->image()->updateOrCreate(["id" => $value["id"]], $value) : $imageFind->delete();
-        //         }
-        //     }
-        // }
+        $this->productService->handlerImagesUpload($product, $request);
 
         // $this->response["result"] = "sucesso";
         // return response()->json($this->response);

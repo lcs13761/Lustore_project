@@ -22,8 +22,4 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function scopeImageExists($query, $id, $image)
-    {
-        return $query->where("id", $id)->where("image", $image);
-    }
 }
