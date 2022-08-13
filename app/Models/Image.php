@@ -8,12 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Image extends Model
 {
     use HasFactory;
-    protected $hidden = [ "created_at" , "updated_at"];
-    protected $table = 'images';
-    public $timestamps = false;
-    protected $fillable = ["image","product_id"];
 
-    public function product(){
+    protected $guarded = ['id'];
+
+    public function product()
+    {
         return $this->hasOne(Product::class);
     }
 }

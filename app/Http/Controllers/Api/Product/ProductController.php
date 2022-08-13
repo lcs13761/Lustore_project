@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\Api\Product;
 
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
-use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
-use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-
     public function __construct(private readonly ProductService $productService)
     {
     }
@@ -41,9 +35,7 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)
     {
-        $product = $this->productService->create($request);
-        $this->productService->handlerImagesUpload($product, $request);
-        return response()->json($this->response);
+        return $this->productService->create($request);
     }
 
     /**
@@ -66,12 +58,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, int $id)
     {
-        $product = $this->productService->update($request, $id);
-
-        $this->productService->handlerImagesUpload($product, $request);
-
-        // $this->response["result"] = "sucesso";
-        // return response()->json($this->response);
+        return $this->productService->update($request, $id);
     }
 
     /**
@@ -82,7 +69,7 @@ class ProductController extends Controller
     public function destroy(int $id)
     {
         $this->productService->delete($id);
-        // $this->response["result"] = "sucesso";
-        // return response()->json($this->response);
+
+        return response()->json($this->response);
     }
 }

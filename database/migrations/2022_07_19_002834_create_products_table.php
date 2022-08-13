@@ -16,7 +16,7 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('code_product');
-            $table->string('barcode')->unique();
+            $table->string('barcode');
             $table->string('product');
             $table->foreignId('category_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->bigInteger('costValue');

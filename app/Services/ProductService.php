@@ -56,11 +56,17 @@ class ProductService
      * Undocumented function
      *
      * @param [type] $request
-     * @return
+     * @return Illuminate\Http\JsonResponse|Illuminate\Http\Response
      */
     public function create($request)
     {
-        return $this->productRepository->create($this->data($request));
+        $product = $this->productRepository->create($this->data($request));
+
+        $images = $this->handlerDataImage($request->get('images'));
+
+        $this->productRepository->createManyImages($product, $images);
+
+        response()->json(['sucess' => '']);
     }
 
     /**
@@ -68,11 +74,65 @@ class ProductService
      *
      * @param [type] $request
      * @param [type] $id
-     * @return void
+     * @return  Illuminate\Http\JsonResponse|Illuminate\Http\Response
      */
     public function update($request, $id)
     {
+        $product = $this->findWith($id);
+
         $this->productRepository->update($this->find($id), $this->data($request));
+
+        $this->syncImages($product, $request->get('images', []));
+
+        response()->json(['sucess' => '']);
+    }
+
+    private function handlerDataImage($images)
+    {
+        return collect($images)->map(fn ($data) => ['image' => $data])->all();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $product
+     * @param [type] $request
+     * @return void
+     */
+    public function syncImages($product, $images)
+    {
+        foreach ($product->images as $index => $image) {
+
+            $filterVerfiy = collect($images)->filter(fn ($data) => $image->image === $data);
+
+            if ($filterVerfiy->isEmpty()) {
+
+                !empty($images[$index]) ? $this->updataImage($image, $images[$index]) :  $this->imageRepository->delete($image);
+
+                $this->deleteImage($image->image);
+
+            } else {
+                $key = $filterVerfiy->keys()->first();
+
+                unset($images[$key]);
+            }
+        }
+
+        $images = $this->handlerDataImage($images);
+
+        $this->productRepository->createManyImages($product, $images);
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $entity
+     * @param [type] $image
+     * @return void
+     */
+    private function updataImage($entity, $image)
+    {
+        $this->imageRepository->update($entity, ['image' => $image]);
     }
 
     /**
@@ -82,9 +142,11 @@ class ProductService
      */
     public function delete($id)
     {
-        $this->removeImages($id);
+        $product = $this->findWith($id);
 
-        $this->productRepository->delete($this->find($id));
+        $this->removeImages($product->images);
+
+        $this->productRepository->delete($product);
     }
 
     /**
@@ -110,39 +172,14 @@ class ProductService
         return array_filter($data);
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param [type] $product
-     * @param [type] $request
-     * @return void
-     */
-    public function handlerImagesUpload($product, $request)
-    {
-        collect($request->get('images', []))->each(function ($image) use ($product) {
-
-            if ($product->images) {
-                collect($product->images)->each(function ($data) use ($image) {
-                    $data->image === $image['url'] ?: $this->deleteImage($data->image);
-                });
-            }
-
-            $this->imageRepository->updateOrCreate(
-                ['id' => $image['id']],
-                ['image' => $image['url'], 'product_id' => $product->id]
-            );
-        });
-    }
 
     /**
      * Undocumented function
      *
      * @return void
      */
-    private function removeImages(int $id)
+    private function removeImages($images)
     {
-        $images = $this->imageRepository->getAllImageForProduct($id);
-
-        $images->each(fn ($image) => $this->delete($image));
+        collect($images)->each(fn ($image) => $this->delete($image->image));
     }
 }

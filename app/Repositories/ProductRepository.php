@@ -18,6 +18,18 @@ class ProductRepository extends AbstractEloquentRepository implements ProductRep
     /**
      * Undocumented function
      *
+     * @param [type] $product
+     * @param array $images
+     * @return mixed
+     */
+    public function createManyImages(object $product, array $images)
+    {
+       return $product->images()->createMany($images);
+    }
+
+    /**
+     * Undocumented function
+     *
      * @return Illuminate\Database\Eloquent\Collection
      */
     public function getAllWithCategory()

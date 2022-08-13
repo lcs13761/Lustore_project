@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
     public array $response = ["error" => '', "result" => []];
     // protected function token()
     // {

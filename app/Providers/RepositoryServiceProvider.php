@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Image;
 use App\Repositories\CategoryRepository;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\ImageRepositoryInterface;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\ImageRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;

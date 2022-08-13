@@ -2,8 +2,6 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\Product;
-
 interface ProductRepositoryInterface
 {
     public function all();
@@ -15,6 +13,7 @@ interface ProductRepositoryInterface
     public function findWithImages(int $id);
     public function findWith(int $id);
     public function create(array $data);
+    public function createManyImages(object $product, array $images);
     public function update(object $entity, array $data);
     public function delete(object $entity);
 }

@@ -30,8 +30,6 @@ class ProductUpdateRequest extends FormRequest
             "barcode" => "nullable|integer|unique:products,barcode,$id",
             "product" => "nullable|string",
             "images" => "nullable|array",
-            "images.id" => "nullable|integer",
-            "images.image" => "nullable|string",
             "category" => "nullable|integer",
             "costValue" => "nullable|numeric",
             "saleValue" => "nullable|numeric",

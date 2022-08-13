@@ -27,8 +27,6 @@ class ProductTest extends TestCase
      */
     public function test_user_store()
     {
-        $password =  $this->faker->word();
-
         Category::factory()->create();
 
         $data = [
@@ -38,15 +36,16 @@ class ProductTest extends TestCase
             "category" => 1,
             "costValue" => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
             "saleValue"  => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
-            "description" => $this->faker->sentence($nbWords = 6, $variableNbWords = true) ,
+            "description" => $this->faker->sentence($nbWords = 6, $variableNbWords = true),
             "size" => $this->faker->randomNumber($nbDigits = NULL, $strict = false),
-            "qts" => $this->faker->randomNumber($nbDigits = NULL, $strict = false)
+            "qts" => $this->faker->randomNumber($nbDigits = NULL, $strict = false),
+            "images" => [$this->faker->imageUrl(), $this->faker->imageUrl(), $this->faker->imageUrl()],
         ];;
 
 
         $this->postJson(route('products.store', $data))->assertJsonMissingValidationErrors();
 
-        $this->assertDatabaseHas('products',collect($data)->except('category')->all());
+        $this->assertDatabaseHas('products', collect($data)->except(['category','images'])->all());
     }
 
     /**
@@ -78,8 +77,15 @@ class ProductTest extends TestCase
             'category_id' => 1
         ]);
 
+        $images =  [$this->faker->imageUrl()];
+
+        $newImage = collect($images)->map(fn($data) => ['image' => $data]);
+
+        $product->images()->createMany($newImage);
+
         $data = [
             "description" => $this->faker->sentence($nbWords = 6, $variableNbWords = true),
+            "images" => [$this->faker->imageUrl(), $this->faker->imageUrl()],
         ];
 
         $this->putJson(route('products.update', ['product' => $product->id]), $data)->assertJsonMissingValidationErrors();

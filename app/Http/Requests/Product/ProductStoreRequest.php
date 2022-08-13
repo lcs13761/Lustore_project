@@ -28,7 +28,6 @@ class ProductStoreRequest extends FormRequest
             "barcode" => "required|integer|unique:products,barcode",
             "product" => "required",
             "images" => "nullable|array",
-            "images.image" => "nullable|string",
             "category" => "required|integer",
             "costValue" => "required|numeric",
             "saleValue" => "required|numeric",
