@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Storage;
 
 trait HandlerImages
 {
-    private null|string $folder = null;
     private $image;
     private null|string $imageExistence;
 
@@ -37,11 +36,6 @@ trait HandlerImages
      * @param string $folder
      * @return static
      */
-    public function folder(string $folder): static
-    {
-        $this->folder = $folder;
-        return $this;
-    }
 
     /**
      * Salvar o arquivo, e necessários informar a pasta de persistência do arquivo
@@ -49,10 +43,12 @@ trait HandlerImages
      * @param string $folder
      * @return null|string
      */
-    public function saveIn(string $folder): ?string
+    public function saveIn(?string $folder = null): ?string
     {
         /** @var Illuminate\Filesystem\FilesystemAdapter */
         $disk =  Storage::disk('public');
+
+        $folder = $folder ?? (isset($this->folder) ? $this->folder : 'default');
 
         return !$this->image ? $this->imageExistence : $disk->putFile($folder, $this->image);
     }

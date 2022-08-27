@@ -36,7 +36,9 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request): Response|JsonResponse
     {
-        $this->categoryService->create($request);
+        $result = $this->categoryService->uploadFile($request);
+        $this->categoryService->create($result);
+
         return response()->json(['result' => 'sucess'], 200);
     }
 
@@ -60,8 +62,10 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, int $id): Response|JsonResponse
     {
-        $this->categoryService->update($id, $request);
-        return response()->json($this->response, 200);
+        $result = $this->categoryService->uploadFile($request, $id);
+        $this->categoryService->update($id, $result);
+
+        return response()->json(['result' => 'Success'], 200);
     }
 
     /**
@@ -73,6 +77,7 @@ class CategoryController extends Controller
     public function destroy(int $id): Response|JsonResponse
     {
         $this->categoryService->destroy($id);
-        return response()->json($this->response, 500);
+
+        return response()->json(['result' => 'Success'], 500);
     }
 }

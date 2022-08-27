@@ -25,7 +25,7 @@ class ProductTest extends TestCase
      *
      * @return void
      */
-    public function test_user_store()
+    public function test_product_store()
     {
         Category::factory()->create();
 
@@ -34,18 +34,19 @@ class ProductTest extends TestCase
             'barcode' => $this->faker->randomNumber($nbDigits = 9, $strict = false),
             "product" => $this->faker->sentence($nbWords = 4, $variableNbWords = true),
             "category" => 1,
-            "costValue" => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
-            "saleValue"  => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
+            "costValue" => $this->faker->randomFloat($nbMaxDecimals = null, $min = 0, $max = null),
+            "saleValue"  => $this->faker->randomFloat($nbMaxDecimals = null, $min = 0, $max = null),
             "description" => $this->faker->sentence($nbWords = 6, $variableNbWords = true),
-            "size" => $this->faker->randomNumber($nbDigits = NULL, $strict = false),
-            "qts" => $this->faker->randomNumber($nbDigits = NULL, $strict = false),
+            "size" => $this->faker->randomNumber($nbDigits = null, $strict = false),
+            "qts" => $this->faker->randomNumber($nbDigits = null, $strict = false),
             "images" => [$this->faker->imageUrl(), $this->faker->imageUrl(), $this->faker->imageUrl()],
-        ];;
+        ];
+        ;
 
 
         $this->postJson(route('products.store', $data))->assertJsonMissingValidationErrors();
 
-        $this->assertDatabaseHas('products', collect($data)->except(['category','images'])->all());
+        $this->assertDatabaseHas('products', collect($data)->except(['category', 'images'])->all());
     }
 
     /**
@@ -53,7 +54,7 @@ class ProductTest extends TestCase
      *
      * @return void
      */
-    public function test_user_show()
+    public function test_product_show()
     {
         Category::factory()->create();
 
@@ -69,7 +70,7 @@ class ProductTest extends TestCase
      *
      * @return void
      */
-    public function test_user_update()
+    public function test_product_update()
     {
         Category::factory()->create();
 
@@ -79,7 +80,7 @@ class ProductTest extends TestCase
 
         $images =  [$this->faker->imageUrl()];
 
-        $newImage = collect($images)->map(fn($data) => ['image' => $data]);
+        $newImage = collect($images)->map(fn ($data) => ['image' => $data]);
 
         $product->images()->createMany($newImage);
 
@@ -90,6 +91,10 @@ class ProductTest extends TestCase
 
         $this->putJson(route('products.update', ['product' => $product->id]), $data)->assertJsonMissingValidationErrors();
 
-        $this->assertDatabaseHas('products', $data);
+        $this->assertDatabaseHas('products', collect($data)->except(['images'])->all());
+
+        collect($data['images'])->each(function ($image) {
+            $this->assertDatabaseHas('images', ['image' => $image]);
+        });
     }
 }
