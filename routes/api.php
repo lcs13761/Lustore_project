@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\HistoricController;
 use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Auth\AuthenticatedController;
 use App\Http\Controllers\Auth\MailController;
@@ -36,9 +36,12 @@ Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
 // Route::post("/reset-password", [PasswordController::class, "changePassword"]);
 // Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
 
+//user
 Route::apiResource('users', UserController::class);
+//product
 Route::apiResource('products', ProductController::class);
-// Route::apiResource('categories', CategoryController::class);
+//category
+Route::apiResource('categories', CategoryController::class);
 // Route::apiResource('sales', SaleController::class)->middleware("auth:api");
 // Route::apiResource('historics', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
 

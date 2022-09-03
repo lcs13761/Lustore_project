@@ -55,6 +55,6 @@ abstract class AbstractEloquentRepository
      */
     public function delete($entity)
     {
-        return $this->entity->delete($entity);
+        return $entity->delete();
     }
 }

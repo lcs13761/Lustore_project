@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Category;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Category\CategoryStoreRequest;
+use App\Http\Requests\Category\CategoryUpdateRequest;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Category\CategoryResource;
@@ -34,7 +36,7 @@ class CategoryController extends Controller
      * @param CategoryRequest $request
      * @return JsonResponse|Response
      */
-    public function store(CategoryRequest $request): Response|JsonResponse
+    public function store(CategoryStoreRequest $request): Response|JsonResponse
     {
         $result = $this->categoryService->uploadFile($request);
         $this->categoryService->create($result);
@@ -60,7 +62,7 @@ class CategoryController extends Controller
      * @param int $id
      * @return JsonResponse|Response
      */
-    public function update(CategoryRequest $request, int $id): Response|JsonResponse
+    public function update(CategoryUpdateRequest $request, int $id): Response|JsonResponse
     {
         $result = $this->categoryService->uploadFile($request, $id);
         $this->categoryService->update($id, $result);
@@ -78,6 +80,6 @@ class CategoryController extends Controller
     {
         $this->categoryService->destroy($id);
 
-        return response()->json(['result' => 'Success'], 500);
+        return response()->json(['result' => 'Success']);
     }
 }
