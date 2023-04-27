@@ -15,12 +15,12 @@ class CreateSalesTable extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->nullable();
-            $table->string('cpf_client')->nullable();
-            $table->foreignId("seller_id")->constrained();
-            $table->foreignId('product_id')->constrained();
-            $table->string("discount")->default('');
-            $table->integer('qts');
+            $table->foreignId("user_id")->index()->nullable();
+            $table->json('products')->nullable();
+            $table->integer('amount');
+            $table->json('paymnent_method');
+            $table->json('delivery_address')->nullable();
+            $table->dateTime('sales_at');
             $table->timestamps();
         });
     }

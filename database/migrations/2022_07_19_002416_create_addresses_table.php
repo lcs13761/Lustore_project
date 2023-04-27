@@ -15,6 +15,7 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('cep')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
@@ -22,7 +23,6 @@ class CreateAddressesTable extends Migration
             $table->string('street')->nullable();
             $table->integer('number')->nullable();
             $table->string('complement')->nullable();
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }
