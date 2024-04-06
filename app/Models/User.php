@@ -6,11 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use HasApiTokens;
     use HasFactory;
     use Notifiable;
 
@@ -20,7 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        "photo",
+        "avatar",
         "name",
         "email",
         "cpf",
@@ -46,26 +46,23 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'active' => 'boolean',
+        'address' => 'collection'
     ];
 
-    public function address()
-    {
-        return $this->hasMany(Address::class);
-    }
+// public function getJWTIdentifier()
+// {
+//     return $this->getKey();
+// }
 
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-
-    // public function getJWTCustomClaims()
-    // {
-    //     return [
-    //         'user' => [
-    //             'name' => $this->name,
-    //             'email' => $this->email,
-    //             "level" => $this->level
-    //         ]
-    //     ];
-    // }
+// public function getJWTCustomClaims()
+// {
+//     return [
+//         'user' => [
+//             'name' => $this->name,
+//             'email' => $this->email,
+//             "level" => $this->level
+//         ]
+//     ];
+// }
 }

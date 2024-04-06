@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Api\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\CategoryStoreRequest;
 use App\Http\Requests\Category\CategoryUpdateRequest;
-use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Category\CategoryResource;
-use App\Services\CategoryService;
+use App\Services\Category\CategoryService;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -23,25 +23,29 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return JsonResponse|Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(): Response|JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return (new CategoryCollection($this->categoryService->all()))->response();
+        return (new CategoryCollection($this->categoryService->paginate($request)))->response();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param CategoryRequest $request
-     * @return JsonResponse|Response
+     * @param CategoryStoreRequest $request
+     * @return JsonResponse
      */
-    public function store(CategoryStoreRequest $request): Response|JsonResponse
+    public function store(CategoryStoreRequest $request): JsonResponse
     {
-        $result = $this->categoryService->uploadFile($request);
-        $this->categoryService->create($result);
-
-        return response()->json(['result' => 'sucess'], 200);
+        try {
+            $result = $this->categoryService->uploadFile($request);
+            $this->categoryService->create($result);
+            return response()->json(['result' => 'sucess']);
+        } catch (Exception $e) {
+            return response()->json(['result' => 'error'], $e->getCode());
+        }
     }
 
     /**
@@ -58,25 +62,28 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param CategoryRequest $request
+     * @param CategoryUpdateRequest $request
      * @param int $id
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function update(CategoryUpdateRequest $request, int $id): Response|JsonResponse
+    public function update(CategoryUpdateRequest $request, int $id): JsonResponse
     {
-        $result = $this->categoryService->uploadFile($request, $id);
-        $this->categoryService->update($id, $result);
-
-        return response()->json(['result' => 'Success'], 200);
+        try {
+            $result = $this->categoryService->uploadFile($request, $id);
+            $this->categoryService->update($id, $result);
+            return response()->json(['result' => 'Success']);
+        } catch (Exception $e) {
+            return response()->json(['result' => 'error'], $e->getCode());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function destroy(int $id): Response|JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $this->categoryService->destroy($id);
 

@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
 interface ProductRepositoryInterface
 {
     public function all();
@@ -9,8 +11,7 @@ interface ProductRepositoryInterface
     public function getAllWithImages();
     public function getAllWith();
     public function find(int $id);
-    public function findWithCategory(int $id);
-    public function findWithImages(int $id);
+    public function paginate($request): LengthAwarePaginator;
     public function findWith(int $id);
     public function create(array $data);
     public function createManyImages(object $product, array $images);

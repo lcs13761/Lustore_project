@@ -1,37 +1,42 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Category;
 
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Traits\HandlerImages;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryService
 {
     use HandlerImages;
 
-    protected $categoryRepository;
-    protected $folder = "category";
+    protected string $folder = "category";
 
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
+    public function __construct(private readonly CategoryRepositoryInterface $categoryRepository)
     {
-        $this->categoryRepository = $categoryRepository;
     }
 
     /**
      * Selecione todas as categorias
-     * @return array
+     * @return Collection
      */
-    public function all()
+    public function all(): Collection
     {
         return $this->categoryRepository->all();
     }
 
+    public function paginate($request): LengthAwarePaginator
+    {
+        return $this->categoryRepository->paginate($request);
+    }
+
     /**
-     * Seleciona uma categoria pelo ID
+     * Seleciona uma categoria pelo ‘ID’
      * @param int $id
      * @return object
      */
-    public function find(int $id)
+    public function find(int $id): object
     {
         return $this->categoryRepository->find($id);
     }
@@ -39,9 +44,11 @@ class CategoryService
     /**
      * Undocumented function
      *
-     * @return
+     * @param $request
+     * @param null $id
+     * @return \Illuminate\Support\Collection
      */
-    public function uploadFile($request, $id = null)
+    public function uploadFile($request, $id = null): \Illuminate\Support\Collection
     {
         $category = !$id ? null : $this->find($id);
 
@@ -51,11 +58,11 @@ class CategoryService
     }
 
     /**
-     * Cria uma nova categoria
+     * Cria uma categoria
      * @param  $request
      * @return object
      */
-    public function create($request)
+    public function create($request): object
     {
         return $this->categoryRepository->create($this->data($request));
     }
@@ -63,10 +70,10 @@ class CategoryService
     /**
      * Atualiza uma categoria
      * @param int $id
-     * @param $categorie
-     * @return
+     * @param $request
+     * @return void
      */
-    public function update(int $id, $request)
+    public function update(int $id, $request): void
     {
         $this->categoryRepository->update($this->find($id), $this->data($request));
     }
@@ -90,10 +97,11 @@ class CategoryService
 
     /**
      * Deleta uma categoria
+     *
      * @param int $id
-     * @return
+     * @return void
      */
-    public function destroy(int $id)
+    public function destroy(int $id): void
     {
         $this->categoryRepository->delete($this->find($id));
     }

@@ -14,23 +14,7 @@ class PasswordController extends Controller
 {
     public function forgotPassword(Request $request): JsonResponse|string
     {
-        $request->validate(["email" => "required|email"]);
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-        if ($status === Password::RESET_LINK_SENT) {
-            $this->response["result"] = "Email enviado com sucesso.";
-            return Response()->json($this->response, 200);
-        }
-        if ($status === Password::INVALID_USER) {
-            $this->response["error"] = "Email não encontrado.";
-            return Response()->json($this->response, 203);
-        }
-        if ($status === Password::RESET_THROTTLED) {
-            $this->response["error"] = "Error, tente novamente mais tarde.";
-            return Response()->json($this->response, 500);
-        }
-        return $status;
+        return Response()->json();
     }
 
     public function changePassword(Request $request)

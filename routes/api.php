@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\HistoricController;
-use App\Http\Controllers\Api\ImageController;
+//use App\Http\Controllers\Api\HistoricController;
+//use App\Http\Controllers\Api\ImageController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Product\ProductController;
@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Api\Report\ReportAnnualController;
 use App\Http\Controllers\Api\Report\ReportCategoryAndProductController;
 use App\Http\Controllers\Api\Report\ReportSalesController;
-use App\Http\Controllers\Api\SaleController;
+//use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\User\UserController;
 
 /*
@@ -27,7 +27,7 @@ use App\Http\Controllers\Api\User\UserController;
 
 
 Route::get("/401", [AuthenticatedController::class, "unauthenticated"])->name('login');
-Route::post("/login", [AuthenticatedController::class, "login"]);
+Route::post("/login", [AuthenticatedController::class, "AuthenticatedController"]);
 Route::post("/logout", [AuthenticatedController::class, "logout"])->middleware('auth:api');
 Route::post("/refresh", [AuthenticatedController::class, "refresh"]);
 

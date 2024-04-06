@@ -2,14 +2,16 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
+
 abstract class AbstractEloquentRepository
 {
     /**
      * Undocumented function
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function all()
+    public function all(): Collection
     {
         return $this->entity->all();
     }
@@ -18,9 +20,9 @@ abstract class AbstractEloquentRepository
      * Undocumented function
      *
      * @param integer $id
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return Object|null
      */
-    public function find(int $id)
+    public function find(int $id): ?Object
     {
         return $this->entity->find($id);
     }
@@ -29,9 +31,9 @@ abstract class AbstractEloquentRepository
      * Undocumented function
      *
      * @param array $data
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return Object|null
      */
-    public function create(array $data)
+    public function create(array $data): ?Object
     {
         return $this->entity->create($data);
     }
@@ -41,9 +43,9 @@ abstract class AbstractEloquentRepository
      *
      * @param [type] $entity
      * @param [type] $data
-     * @return mixed
+     * @return bool
      */
-    public function update($entity, $data)
+    public function update($entity, $data): bool
     {
         return $entity->update($data);
     }
@@ -51,9 +53,9 @@ abstract class AbstractEloquentRepository
     /**
      * Undocumented function
      * @param [type] $entity
-     * @return mixed
+     * @return bool
      */
-    public function delete($entity)
+    public function delete($entity): bool
     {
         return $entity->delete();
     }

@@ -21,29 +21,26 @@ class UserFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail(),
-            'cpf' => $this->faker->cpf(false),
+            'cpf' => $this->faker->cpf(),
             'email_verified_at' => now(),
+            'phone' => null,
+            'remember_token' => Str::random(10),
+            'address' => [
+                'cep' => '',
+                'city' => '',
+                'state' => '',
+                'district' => '',
+                'street' => '',
+                'number' => '',
+                'complement' => ''
+            ],
             'active' => true,
             'password' => Hash::make('password'), // password
         ];
-    }
-
-    /**
-     * Indicate that the model's email address should be unverified.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    public function unverified()
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'email_verified_at' => null,
-            ];
-        });
     }
 }

@@ -4,22 +4,29 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Models\Category;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class CategoryRepository extends AbstractEloquentRepository implements CategoryRepositoryInterface
 {
-    protected $entity;
+    protected Category $entity;
 
     public function __construct(Category $category)
     {
         $this->entity = $category;
     }
 
-     /**
+    public function paginate($request): LengthAwarePaginator
+    {
+        return $this->entity->query()->paginate($request->get('limit', 10));
+    }
+
+    /**
      * Undocumented function
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
-    public function getAllWithProducts()
+    public function getAllWithProducts(): Collection
     {
         return $this->entity->with('products')->get();
     }
@@ -28,9 +35,9 @@ class CategoryRepository extends AbstractEloquentRepository implements CategoryR
      * Undocumented function
      *
      * @param integer $id
-     * @return mixed
+     * @return Category|null
      */
-    public function findWithProducts(int $id)
+    public function findWithProducts(int $id): ?Category
     {
         return $this->entity->with('products')->find($id);
     }

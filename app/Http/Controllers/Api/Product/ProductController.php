@@ -7,8 +7,10 @@ use App\Http\Requests\Product\ProductStoreRequest;
 use App\Http\Requests\Product\ProductUpdateRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
-use App\Services\ProductService;
+use App\Services\Product\ProductService;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ProductController extends Controller
@@ -20,22 +22,28 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return JsonResponse|Response
      */
-    public function index(): Response|JsonResponse
+    public function index(Request $request): Response|JsonResponse
     {
-        return (new ProductCollection($this->productService->all()))->response();
+        return (new ProductCollection($this->productService->paginate($request)))->response();
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param ProductStoreRequest $request
-     * @return JsonResponse|Response
+     * @return JsonResponse
      */
-    public function store(ProductStoreRequest $request)
+    public function store(ProductStoreRequest $request): JsonResponse
     {
-        return $this->productService->create($request);
+        try {
+            $this->productService->create($request);
+            return response()->json(['result' => 'success']);
+        } catch (Exception $e) {
+            return response()->json(['result' => 'error'], $e->getCode());
+        }
     }
 
     /**
@@ -53,12 +61,17 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      *
      * @param ProductUpdateRequest $request
-     * @param int  $id
-     * @return JsonResponse|Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function update(ProductUpdateRequest $request, int $id)
+    public function update(ProductUpdateRequest $request, int $id): JsonResponse
     {
-        return $this->productService->update($request, $id);
+        try {
+            $this->productService->update($request, $id);
+            return response()->json(['result' => 'success']);
+        } catch (Exception $e) {
+            return response()->json(['result' => 'error'], $e->getCode());
+        }
     }
 
     /**
@@ -66,10 +79,13 @@ class ProductController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): JsonResponse
     {
-        $this->productService->delete($id);
-
-        return response()->json($this->response);
+        try {
+            $this->productService->delete($id);
+            return response()->json(['result' => 'success']);
+        } catch (Exception $e) {
+            return response()->json(['result' => 'error'], $e->getCode());
+        }
     }
 }

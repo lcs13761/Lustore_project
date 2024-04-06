@@ -4,11 +4,12 @@ namespace App\Repositories;
 
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Models\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductRepository extends AbstractEloquentRepository implements ProductRepositoryInterface
 {
-
-    protected $entity;
+    protected Product $entity;
 
     public function __construct(Product $product)
     {
@@ -18,21 +19,25 @@ class ProductRepository extends AbstractEloquentRepository implements ProductRep
     /**
      * Undocumented function
      *
-     * @param [type] $product
+     * @param object $product
      * @param array $images
      * @return mixed
      */
-    public function createManyImages(object $product, array $images)
+    public function createManyImages(object $product, array $images): mixed
     {
        return $product->images()->createMany($images);
+    }
+
+    public function paginate($request): LengthAwarePaginator
+    {
+        return $this->entity->query()->paginate($request->get('limit', 10));
     }
 
     /**
      * Undocumented function
      *
-     * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAllWithCategory()
+    public function getAllWithCategory(): array|Collection
     {
         return $this->entity->with('category')->get();
     }
@@ -40,9 +45,9 @@ class ProductRepository extends AbstractEloquentRepository implements ProductRep
     /**
      * Undocumented function
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return array|Collection
      */
-    public function getAllWithImages()
+    public function getAllWithImages(): array|Collection
     {
         return $this->entity->with('images')->get();
     }
@@ -50,9 +55,9 @@ class ProductRepository extends AbstractEloquentRepository implements ProductRep
     /**
      * Undocumented function
      *
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return array|Collection
      */
-    public function getAllWith()
+    public function getAllWith(): array|Collection
     {
         return $this->entity->with(['category', 'images'])->get();
     }
@@ -61,32 +66,10 @@ class ProductRepository extends AbstractEloquentRepository implements ProductRep
      * Undocumented function
      *
      * @param integer $id
-     * @return mixed
+     * @return Product|null
      */
-    public function findWithCategory(int $id)
+    public function findWith(int $id): ?Product
     {
-        return $this->entity->with('category')->find($id);
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function findWithImages(int $id)
-    {
-        return $this->entity->with('images')->find($id);
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param integer $id
-     * @return mixed
-     */
-    public function findWith(int $id)
-    {
-        return $this->entity->with(['category', 'images'])->find($id);
+        return $this->entity->with(['category','images' ])->find($id);
     }
 }

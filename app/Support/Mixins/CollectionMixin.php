@@ -2,14 +2,15 @@
 
 namespace App\Support\Mixins;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class CollectionMixin
 {
-    public function exceptCollection()
+    public function exceptCollection(): \Closure
     {
         return function ($except) {
-            /** @var \Illuminate\Support\Collection $this */
+            /** @var Collection $this */
             return $this->map(fn ($data) => collect($data)->except($except)->all());
         };
     }

@@ -3,13 +3,14 @@
 namespace App\Support\Mixins;
 
 use Closure;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HasManyMixin
 {
-    public function syncMany()
+    public function syncMany(): Closure
     {
         return function (array $values) {
-            /** @var \Illuminate\Database\Eloquent\Relations\HasMan $this */
+            /** @var HasMany $this */
             $result = $this->get();
 
             foreach ($result as $index => $data) {

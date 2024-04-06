@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Sale;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaleRequest;
@@ -21,7 +21,7 @@ class SaleController extends Controller
      */
     public function index(): Response|JsonResponse
     {
-        $sale = Sale::where("salesman" , $this->token()->level == 5 ? $this->emailAccess() : "system" )->get();
+        $sale = Sale::where("salesman", $this->token()->level == 5 ? $this->emailAccess() : "system")->get();
         return (new SaleCollection($sale->loadMissing(["product"])))->response();
     }
 
@@ -34,9 +34,9 @@ class SaleController extends Controller
     public function store(SaleRequest $request): Response|JsonResponse
     {
         $product = Product::find($request->product["id"]);
-        $product->qts  -= $request->qts;
-        abort_if($product->qts < 0,500,"error quantdade");
-        $verifySale = Sale::where("client", $request->client)->where(function($query) use ($request){
+        $product->qts -= $request->qts;
+        abort_if($product->qts < 0, 500, "error quantdade");
+        $verifySale = Sale::where("client", $request->client)->where(function ($query) use ($request) {
             $query->where("product_id", $request->product["id"])->where("salesman", $request->salesman);
         })->first();
 
@@ -79,14 +79,14 @@ class SaleController extends Controller
     public function update(SaleRequest $request, Sale $sale): Response|JsonResponse
     {
         $product = Product::find($sale->product_id);
-        if($request->qts > $sale->qts) {
+        if ($request->qts > $sale->qts) {
             $newQts = $request->qts - $sale->qts;
             $product->qts -= $newQts;
         }
-        if($request->qts < $sale->qts && $request->qts > 0) {
+        if ($request->qts < $sale->qts && $request->qts > 0) {
             $newQts = $sale->qts - $request->qts;
             $product->qts += $newQts;
-        
+
         }
 
         abort_if(!$sale->update($request->all()) || !$product->save(), 500, "Error");

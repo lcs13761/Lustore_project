@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait HandlerImages
 {
-    private $image;
+    private mixed $image;
     private null|string $imageExistence;
 
     /**
@@ -40,15 +40,14 @@ trait HandlerImages
     /**
      * Salvar o arquivo, e necessários informar a pasta de persistência do arquivo
      *
-     * @param string $folder
+     * @param string|null $folder
      * @return null|string
      */
     public function saveIn(?string $folder = null): ?string
     {
-        /** @var Illuminate\Filesystem\FilesystemAdapter */
         $disk =  Storage::disk('public');
 
-        $folder = $folder ?? (isset($this->folder) ? $this->folder : 'default');
+        $folder = $folder ?? ($this->folder ?? 'default');
 
         return !$this->image ? $this->imageExistence : $disk->putFile($folder, $this->image);
     }
@@ -56,10 +55,10 @@ trait HandlerImages
     /**
      * Remover Imagem
      *
-     * @param string $image
+     * @param string|null $image
      * @return void
      */
-    public function deleteImage($image = null)
+    public function deleteImage(string $image = null): void
     {
         if ($this->hasFile($image)) {
             Storage::disk('public')->delete($image);
@@ -74,7 +73,7 @@ trait HandlerImages
      */
     public function hasFile($file): bool
     {
-        return !$file ? false : Storage::disk('public')->exists($file);
+        return $file && Storage::disk('public')->exists($file);
     }
 
 
@@ -85,11 +84,10 @@ trait HandlerImages
      * @param [type] $file
      * @return string|null
      */
-    private function saveFile($folder = null, $file = null): ?string
+    public function saveFile($folder = null, $file = null): ?string
     {
         $file = $file ?? $this->image;
 
-        /** @var Illuminate\Filesystem\FilesystemAdapter */
         $disk =  Storage::disk('public');
 
         return !$file ? $this->imageExistence : $disk->putFile($folder ?? $this->folder, $file);

@@ -11,14 +11,14 @@ class CreateProductsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text("description")->nullable();
             $table->double('price');
-            $table->foreignId('category_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('category_id')->index()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             // $table->bigInteger('costValue');
             // $table->bigInteger('saleValue');
             $table->integer('qts_stock');
@@ -33,7 +33,7 @@ class CreateProductsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('products');
     }
