@@ -1,0 +1,96 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config './tailwind.config.js';
+
+/** header/logo */
+.fi-sidebar-header {
+    @apply bg-primary-500 ring-primary-500;
+}
+
+.fi-sidebar-header .fi-icon-btn {
+    @apply text-white;
+}
+
+/** sidebar */
+.fi-sidebar {
+    @apply bg-gradient-to-b dark:from-gray-950 dark:to-gray-800 from-primary-500 via-primary-500 to-primary-500 dark:bg-transparent;
+}
+
+.fi-sidebar-group div span {
+    @apply text-white;
+}
+
+.fi-sidebar-group .fi-icon-btn {
+    @apply text-primary-300;
+}
+
+.fi-sidebar-group .fi-icon-btn:hover {
+    @apply text-white;
+}
+
+.fi-sidebar-item-icon {
+    @apply text-primary-300
+}
+
+.fi-sidebar-item a {
+    @apply text-white;
+}
+
+.fi-sidebar-item-label {
+    @apply text-white;
+}
+
+.fi-sidebar-item a:hover {
+    @apply text-primary-50 bg-primary-600;
+}
+
+.fi-sidebar-item .fi-badge {
+    @apply text-primary-50 bg-primary-600;
+}
+
+.fi-sidebar-item-active a {
+    @apply bg-primary-700 bg-opacity-60;
+}
+
+.fc-bg-opacity {
+    opacity: inherit !important;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-label {
+    @apply font-extrabold;
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    @apply text-primary-400;
+}
+
+.fc-event-time {
+    display: none;
+}
+
+.fc-event-title {
+    margin-left: 10px;
+}
+
+/** main content */
+.fi-main-ctn {
+    @apply bg-opacity-10 bg-gray-50 dark:bg-transparent;
+}
+
+.fi-layout {
+    @apply bg-opacity-10 bg-gray-50 dark:bg-transparent;
+}
+
+/** badge */
+.fi-badge {
+    @apply rounded-full;
+}
+
+/** button */
+.fi-btn {
+    @apply ring-transparent shadow-gray-400 dark:shadow-gray-950;
+}
+
+.fc-h-event .fc-event-time {
+    overflow: visible !important;
+}

@@ -26,22 +26,22 @@ use App\Http\Controllers\Api\User\UserController;
 */
 
 
-Route::get("/401", [AuthenticatedController::class, "unauthenticated"])->name('login');
-Route::post("/login", [AuthenticatedController::class, "AuthenticatedController"]);
-Route::post("/logout", [AuthenticatedController::class, "logout"])->middleware('auth:api');
-Route::post("/refresh", [AuthenticatedController::class, "refresh"]);
+//Route::get("/401", [AuthenticatedController::class, "unauthenticated"])->name('login');
+//Route::post("/login", [AuthenticatedController::class, "AuthenticatedController"]);
+//Route::post("/logout", [AuthenticatedController::class, "logout"])->middleware('auth:api');
+//Route::post("/refresh", [AuthenticatedController::class, "refresh"]);
 
-Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
+//Route::get("/verification/{id}/{hash}", [MailController::class, "verifyEmail"]);
 // Route::post("/forget", [PasswordController::class, "forgotPassword"]);
 // Route::post("/reset-password", [PasswordController::class, "changePassword"]);
 // Route::post("/email/resendverification", [MailController::class, "resendVerification"])->middleware("auth:api")->name("verification.send");
 
 //user
-Route::apiResource('users', UserController::class);
-//product
-Route::apiResource('products', ProductController::class);
-//category
-Route::apiResource('categories', CategoryController::class);
+//Route::apiResource('users', UserController::class);
+////product
+//Route::apiResource('products', ProductController::class);
+////category
+//Route::apiResource('categories', CategoryController::class);
 // Route::apiResource('sales', SaleController::class)->middleware("auth:api");
 // Route::apiResource('historics', HistoricController::class)->except(["show","update","destroy"])->middleware("auth:api");
 

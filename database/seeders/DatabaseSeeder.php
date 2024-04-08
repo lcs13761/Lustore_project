@@ -2,12 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,11 +11,11 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->call([
             UserSeeder::class,
-            CategorySeeder::class,
+            //CategorySeeder::class,
             //OrdersSeeder::class,
         ]);
     }
