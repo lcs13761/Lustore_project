@@ -17,6 +17,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+        ];
+    }
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
@@ -138,7 +150,7 @@ class UserResource extends Resource
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => Str::ucfirst($record->name))
                             ->preload(),
 
-                        Forms\Components\Toggle::make('is_active')->required(),
+                        Forms\Components\Toggle::make('is_active'),
 
                     ])->grow(false),
                 ]),

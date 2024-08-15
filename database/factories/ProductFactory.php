@@ -11,18 +11,23 @@ class ProductFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            "code_product" => $this->faker->randomNumber($nbDigits = 9, $strict = false),
-            'barcode' => $this->faker->randomNumber($nbDigits = 9, $strict = false),
-            "product" => $this->faker->sentence($nbWords = 4, $variableNbWords = true),
-            "category_id" => $this->faker->numberBetween($min = 1, $max = 10),
-            "costValue" => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
-            "saleValue"  => $this->faker->randomFloat($nbMaxDecimals = NULL, $min = 0, $max = NULL),
-            "description" => $this->faker->sentence($nbWords = 6, $variableNbWords = true) ,
-            "size" => $this->faker->randomNumber($nbDigits = NULL, $strict = false),
-            "qts" => $this->faker->randomNumber($nbDigits = NULL, $strict = false)
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+            'price' => $this->faker->randomFloat(2, 10, 1000),
+            'size' => $this->faker->randomElement(['S', 'M', 'L', 'XL']),
+            'color' => $this->faker->safeColorName,
+            'brand_id' => $this->faker->numberBetween(1, 5),
+            'stock_quantity' => $this->faker->numberBetween(1, 100),
+            'sku' => $this->faker->unique()->numerify('SKU-#####'),
+            'barcode' => $this->faker->unique()->ean13,
+            'material' => $this->faker->randomElement(['cotton', 'polyester', 'wool']),
+            'gender' => $this->faker->randomElement(['male', 'female', 'unisex']),
+            'weight' => $this->faker->randomFloat(2, 0.1, 5),
+            'dimensions' => $this->faker->randomElement(['10x10x1', '20x15x2', '30x20x3']),
+            'is_active' => $this->faker->boolean,
         ];
     }
 }

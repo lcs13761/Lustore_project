@@ -15,15 +15,20 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('sku');
             $table->string('name');
-            $table->text("description")->nullable();
-            $table->double('price');
-            // $table->bigInteger('costValue');
-            // $table->bigInteger('saleValue');
-            $table->integer('stock');
-            $table->json('information')->nullable();
-            $table->boolean('is_active')->default(false);
+            $table->text('description')->nullable();
+            $table->decimal('price');
+            $table->unsignedBigInteger('brand_id')->index()->nullable();
+            $table->string('size')->nullable();
+            $table->string('color')->nullable();
+            $table->integer('stock_quantity');
+            $table->string('sku')->unique();
+            $table->string('barcode')->unique()->nullable();
+            $table->string('material')->nullable();
+            $table->string('gender')->nullable();
+            $table->decimal('weight')->nullable();
+            $table->string('dimensions')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

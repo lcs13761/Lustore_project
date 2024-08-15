@@ -17,8 +17,8 @@ class DatabaseSeeder extends Seeder
             ShieldSeeder::class,
             StateSeeder::class,
             UserSeeder::class,
-            //CategorySeeder::class,
-            //OrdersSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class
         ]);
     }
 }

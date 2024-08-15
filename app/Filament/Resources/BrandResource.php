@@ -2,27 +2,37 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CategoryResource\Pages;
-use App\Models\Category;
+use App\Filament\Resources\BrandResource\Pages;
+use App\Models\Brand;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class CategoryResource extends Resource
+class BrandResource extends Resource implements HasShieldPermissions
 {
-    protected static ?string $model = Category::class;
+    protected static ?string $model = Brand::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 2;
 
-    /**
-     * Retrieves the navigation group for the User resource.
-     *
-     * @return string|null The localized navigation group for the User resource, or null if not set.
-     */
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+        ];
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return __('Products');
@@ -30,9 +40,8 @@ class CategoryResource extends Resource
 
     public static function getModelLabel(): string
     {
-        return __('Category');
+        return __('Brand');
     }
-
 
     public static function form(Form $form): Form
     {
@@ -41,8 +50,6 @@ class CategoryResource extends Resource
             ->schema([
                 Forms\Components\Split::make([
                     Forms\Components\Section::make([
-                        Forms\Components\Select::make('parent_id')->relationship('parent', 'name'),
-
                         Forms\Components\TextInput::make('name')->required()->maxLength(255),
 
                         Forms\Components\Textarea::make('description')->columnSpanFull(),
@@ -53,8 +60,8 @@ class CategoryResource extends Resource
                         Forms\Components\DateTimePicker::make('updated_at')->disabled(),
 
                         Forms\Components\SpatieMediaLibraryFileUpload::make('image')
-                            ->directory('category')
-                            ->collection('category'),
+                            ->directory('brand')
+                            ->collection('brand'),
 
                         Forms\Components\Toggle::make('is_active')
                     ])->grow(false),
@@ -66,11 +73,10 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
-//                Tables\Columns\TextColumn::make('parent.name')
-//                    ->numeric()
-//                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('name')->searchable(),
+                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('products_count')
                     ->badge()
@@ -90,14 +96,17 @@ class CategoryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+//                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\ForceDeleteBulkAction::make(),
+//                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -105,9 +114,18 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
+            'index' => Pages\ListBrands::route('/'),
+            'create' => Pages\CreateBrand::route('/create'),
+            'view' => Pages\ViewBrand::route('/{record}'),
+            'edit' => Pages\EditBrand::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 }

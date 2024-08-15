@@ -51,5 +51,19 @@
     "District": "Bairro",
     "Street": "Rua",
     "Number": "Número",
-    "Complement": "Complemento"
+    "Complement": "Complemento",
+    "Products" : "Produtos",
+    "Product" : "Produto",
+    "Price": "Preço",
+    "Size" : "Tamanho",
+    "Color" : "Cor",
+    "Stock quantity" : "Quantidade em estoque",
+    "Sku" : "SKU",
+    "Barcode" : "Código de barras",
+    "Material" : "Material",
+    "Gender" : "Gênero",
+    "Weight" : "Peso",
+    "Dimensions" : "Dimensões",
+    "Brand" : "Marca",
+    "Parent" : "Categoria"
 }
