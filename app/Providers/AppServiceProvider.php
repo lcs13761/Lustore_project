@@ -27,13 +27,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->mixins();
+        //$this->mixins();
     }
-
-    protected function mixins()
-    {
-        HasMany::mixin(new Mixins\HasManyMixin());
-        Collection::mixin(new Mixins\CollectionMixin());
-        Response::mixin(new Mixins\ResponseMixin());
-    }
+//
+//    protected function mixins()
+//    {
+//        HasMany::mixin(new Mixins\HasManyMixin());
+//        Collection::mixin(new Mixins\CollectionMixin());
+//        Response::mixin(new Mixins\ResponseMixin());
+//    }
 }

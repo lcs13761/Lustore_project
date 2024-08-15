@@ -8,12 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -24,9 +25,8 @@ class User extends Authenticatable implements MustVerifyEmail
         "name",
         "email",
         "cpf",
-        "active",
-        "phone",
-        'address',
+        "is_active",
+        "phone_number",
         "password",
     ];
 
@@ -47,7 +47,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'active' => 'boolean',
+        'is_active' => 'boolean',
+        'password' => 'hashed',
     ];
 
     public function addresses(): HasMany

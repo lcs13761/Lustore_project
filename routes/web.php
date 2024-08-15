@@ -1,12 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Auth\PasswordController;
-use App\Http\Controllers\web\Mail\MailController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Web\AuthForgotController;
-use App\Http\Controllers\Web\VerifyEmail;
 use Illuminate\Support\Facades\Route;
-use PhpParser\Node\Stmt\Break_;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,11 +14,8 @@ use PhpParser\Node\Stmt\Break_;
 */
 
 Route::get('/', function () {
-
-
-dd('aa');
-
-
+    return view('welcome');
 })->name("home");
+
 
 

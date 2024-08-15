@@ -27,26 +27,26 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerPolicies();
-    
-        VerifyEmail::toMailUsing(function($notifiable,$url){
-            $displayableActionUrl = str_replace(['mailto:', 'tel:'], '', $url ?? '');
-            return (new MailMessage)
-            ->subject("Verifique Seu E-mail")
-            ->markdown('mail.verifyEmail',["url" => $url,"displayableActionUrl" => $displayableActionUrl]);         
-        });
-
-        ResetPassword::toMailUsing(function($notifiable,$url){
-            $address = $notifiable instanceof AnonymousNotifiable
-        ? $notifiable->routeNotificationFor('mail')
-        : $notifiable->email;
-
-        $url = url('/retrieve_password', $url) .  "?email=" . $address;
-        $displayableActionUrl = str_replace(['mailto:', 'tel:'], '', $url ?? '');
-
-        return (new MailMessage)
-                    ->markdown('mail.resetPassword',
-                    ["url" => $url , "displayableActionUrl" => $displayableActionUrl]);
-        });
+//        $this->registerPolicies();
+//
+//        VerifyEmail::toMailUsing(function($notifiable,$url){
+//            $displayableActionUrl = str_replace(['mailto:', 'tel:'], '', $url ?? '');
+//            return (new MailMessage)
+//            ->subject("Verifique Seu E-mail")
+//            ->markdown('mail.verifyEmail',["url" => $url,"displayableActionUrl" => $displayableActionUrl]);
+//        });
+//
+//        ResetPassword::toMailUsing(function($notifiable,$url){
+//            $address = $notifiable instanceof AnonymousNotifiable
+//        ? $notifiable->routeNotificationFor('mail')
+//        : $notifiable->email;
+//
+//        $url = url('/retrieve_password', $url) .  "?email=" . $address;
+//        $displayableActionUrl = str_replace(['mailto:', 'tel:'], '', $url ?? '');
+//
+//        return (new MailMessage)
+//                    ->markdown('mail.resetPassword',
+//                    ["url" => $url , "displayableActionUrl" => $displayableActionUrl]);
+//        });
     }
 }

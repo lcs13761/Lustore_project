@@ -17,26 +17,3 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
-
-
-Artisan::command('seed', function () {
-    Artisan::call('config:cache');
-    Artisan::call('cache:clear');
-    //base de dados (default)
-    $database = '';
-
-    /**
-     * limpando a base e rodando migrations e seeders
-     */
-
-    $this->comment('Limpando tabelas existentes da base de dados...');
-    Artisan::call("db:wipe $database");
-
-    $this->comment('Migrando tabelas do sistema...');
-    Artisan::call("migrate $database");
-
-    $this->comment('Rodando seeders com o ponto inicial da aplicacão...');
-    Artisan::call("db:seed $database");
-
-
-})->purpose('Migrate e seeders necessários para rodar o ponto inicial da aplicação.');

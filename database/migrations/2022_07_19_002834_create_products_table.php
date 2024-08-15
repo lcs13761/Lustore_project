@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             // $table->bigInteger('saleValue');
             $table->integer('stock');
             $table->json('information')->nullable();
-            $table->boolean('active')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }
