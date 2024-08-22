@@ -18,6 +18,11 @@ class ProductSeeder extends Seeder
         //
         $products = Product::factory()->count(10)->create();
 
-        $products->each(fn($product) => $product->categories()->attach(rand(1, 5)));
+        $products->each(function ($product) {
+            $product->categories()->attach(rand(1, 5));
+
+            $product->addMediaFromUrl(fake()->imageUrl(640, 480, 'fashion'))
+                ->toMediaCollection('products');
+        });
     }
 }

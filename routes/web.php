@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name("home");
+Route::get('/', \App\Livewire\Web\Home::class)->name('home');
 
-
+Route::get('/about', \App\Livewire\Web\About::class)->name('about');
 

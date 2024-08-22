@@ -39,9 +39,9 @@ class AdminPanelProvider extends PanelProvider
             ->emailVerification()
             ->passwordReset()
             ->bootUsing(function () {
-                Field::configureUsing(fn (Field $field) => $field->translateLabel());
-                Column::configureUsing(fn (Column $column) => $column->translateLabel());
-                TextInput::configureUsing(fn (TextInput $textInput) => $textInput->autocomplete(false));
+                Field::configureUsing(fn(Field $field) => $field->translateLabel());
+                Column::configureUsing(fn(Column $column) => $column->translateLabel());
+                TextInput::configureUsing(fn(TextInput $textInput) => $textInput->autocomplete(false));
             })
             ->colors([
                 'primary' => Color::Stone,
@@ -69,9 +69,13 @@ class AdminPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
-            ])
+            ], isPersistent: true)
             ->plugins([
                 FilamentShieldPlugin::make(),
+            ])
+            ->navigationGroups([
+                __('Users'),
+                __('Products')
             ])
             ->spa()
             ->databaseTransactions();
